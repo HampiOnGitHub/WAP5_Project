@@ -1,0 +1,51 @@
+{
+    "home": {
+        "title": "Startseite",
+        "welcomeMessage": "Willkommen auf der Startseite des Hagenberg Athletics Clubs."
+    },
+    "register": {
+        "title": "Registrieren",
+        "username": "Benutzername",
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "email": "E-Mail",
+        "password": "Passwort",
+        "confirmPassword": "Passwort bestätigen",
+        "verificationCode": "Verifizierungscode",
+        "verificationSent": "Ein Verifizierungscode wurde gesendet! (Siehe Konsole für Mock-Code)",
+        "registerButton": "Registrieren",
+        "verifyButton": "Code überprüfen",
+        "processing": "Verarbeitung..."
+    },
+    "login": {
+        "title": "Login",
+        "identifier": "E-Mail oder Benutzername",
+        "password": "Passwort",
+        "loginButton": "Anmelden",
+        "processing": "Wird verarbeitet...",
+        "noAccount": "Noch keinen Account?",
+        "registerLink": "Hier registrieren"
+    },
+    "header": {
+        "logout": "Ausloggen",
+        "profile": "Profil",
+        "title": "Hagenberg Athletics Club"
+    },
+    "errors": {
+        "usernameRequired": "Benutzername ist erforderlich",
+        "firstNameRequired": "Vorname ist erforderlich",
+        "lastNameRequired": "Nachname ist erforderlich",
+        "emailRequired": "E-Mail ist erforderlich",
+        "passwordRequired": "Passwort ist erforderlich",
+        "confirmPasswordRequired": "Bitte bestätigen Sie Ihr Passwort",
+        "passwordsDoNotMatch": "Passwörter stimmen nicht überein",
+        "registrationFailed": "Registrierung fehlgeschlagen",
+        "serverNotReachable": "Server nicht erreichbar",
+        "invalidVerificationCode": "Ungültiger Verifizierungscode",
+        "identifierRequired": "E-Mail oder Benutzername ist erforderlich",
+        "loginFailed": "Login fehlgeschlagen"
+    },
+    "messages": {
+        "registrationCompleted": "Registrierung erfolgreich abgeschlossen!"
+    }
+}
