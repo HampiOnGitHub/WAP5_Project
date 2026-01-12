@@ -1,0 +1,51 @@
+{
+    "home": {
+        "title": "Home",
+        "welcomeMessage": "Welcome to the homepage of the hagenberg athletics club."
+    },
+    "register": {
+        "title": "Register",
+        "username": "Username",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "password": "Password",
+        "confirmPassword": "Confirm Password",
+        "verificationCode": "Verification Code",
+        "verificationSent": "A verification code has been sent! (Check console for mock code)",
+        "registerButton": "Register",
+        "verifyButton": "Verify Code",
+        "processing": "Processing..."
+    },
+    "login": {
+        "title": "Login",
+        "identifier": "Email or Username",
+        "password": "Password",
+        "loginButton": "Login",
+        "processing": "Processing...",
+        "noAccount": "Don't have an account?",
+        "registerLink": "Register here"
+    },
+    "header": {
+        "logout": "Logout",
+        "profile": "Profile",
+        "title": "Hagenberg Athletics Club"
+    },
+    "errors": {
+        "usernameRequired": "Username is required",
+        "firstNameRequired": "First name is required",
+        "lastNameRequired": "Last name is required",
+        "emailRequired": "Email is required",
+        "passwordRequired": "Password is required",
+        "confirmPasswordRequired": "Please confirm your password",
+        "passwordsDoNotMatch": "Passwords do not match",
+        "registrationFailed": "Registration failed",
+        "serverNotReachable": "Server not reachable",
+        "invalidVerificationCode": "Invalid verification code",
+        "identifierRequired": "Email or Username is required",
+        "loginFailed": "Login failed"
+    },
+    "messages": {
+        "registrationCompleted": "Registration completed successfully!"
+    }
+}
