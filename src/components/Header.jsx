@@ -9,6 +9,7 @@ import Select from "@mui/material/Select";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 
 function Header() {
     const { t, i18n } = useTranslation();
@@ -24,6 +25,7 @@ function Header() {
     return (
         <AppBar position="sticky">
             <Toolbar>
+                <SportsSoccerIcon/>
                 <Typography
                     variant="h6"
                     sx={{ flexGrow: 1 }}
@@ -32,7 +34,7 @@ function Header() {
                     color="inherit"
                     style={{ textDecoration: "none" }}
                 >
-                    {t("header.title")}
+                    &nbsp;HAC
                 </Typography>
 
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>

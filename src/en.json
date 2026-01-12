@@ -1,7 +1,13 @@
 {
     "home": {
-        "title": "Home",
-        "welcomeMessage": "Welcome to the homepage of the hagenberg athletics club."
+        "title": "Hagenberg Athletics Club",
+        "welcomeMessage": "Welcome to the Hagenberg Athletics Club - connect with athletes from your region.",
+        "activityParticipants": "participants",
+        "noDateYet": "by arrangement",
+        "seeMore": "Sign-Up & Details",
+        "seeNoMore": "Login to see more",
+        "exploreActivities": "Explore Activities",
+        "exploreActivitiesDesc": "Explore different sports events that were organized by athletes in your region."
     },
     "register": {
         "title": "Register",
@@ -28,8 +34,7 @@
     },
     "header": {
         "logout": "Logout",
-        "profile": "Profile",
-        "title": "Hagenberg Athletics Club"
+        "profile": "Profile"
     },
     "errors": {
         "usernameRequired": "Username is required",
