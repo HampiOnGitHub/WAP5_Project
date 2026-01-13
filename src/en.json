@@ -3,11 +3,20 @@
         "title": "Hagenberg Athletics Club",
         "welcomeMessage": "Welcome to the Hagenberg Athletics Club - connect with athletes from your region.",
         "activityParticipants": "participants",
+        "date": "Date & Time: ",
         "noDateYet": "by arrangement",
         "seeMore": "Sign-Up & Details",
         "seeNoMore": "Login to see more",
         "exploreActivities": "Explore Activities",
-        "exploreActivitiesDesc": "Explore different sports events that were organized by athletes in your region."
+        "exploreActivitiesDesc": "Explore different sports events that were organized by athletes in your region.",
+        "organizer": "Organizer",
+        "loading": "Contents are loading...",
+        "goBack": "Go Back"
+    },
+    "eventDetails": {
+        "full": "Activity is full",
+        "signUp": "Sign Up",
+        "editEvent": "Edit Event"
     },
     "register": {
         "title": "Register",

@@ -25,6 +25,7 @@ export function AuthProvider({ children }) {
 
     const login = (userData) => {
         setUser(userData);
+        console.log(userData);
         localStorage.setItem("authUser", JSON.stringify(userData));
         localStorage.setItem("authUserTime", Date.now().toString());
     };
@@ -42,6 +43,7 @@ export function AuthProvider({ children }) {
     );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
     return useContext(AuthContext);
 }

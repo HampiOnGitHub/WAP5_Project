@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { Home } from "@mui/icons-material";
 
 function App() {
     const { t } = useTranslation();
@@ -74,18 +75,22 @@ function App() {
         },
         {
             activityId: 6,
-            title: "Tennis",
+            title: "Tennisinvergangenheit",
             organizer: "Jonas Schön",
             description: "Entspanntes Tennisdoppel für alle Levels.",
             img: "/images/tennis.jpg",
             participants: ["Anna M.", "Lukas F.", "Sophie K."],
             maxParticipants: 4,
-            dateAndTime: "2026-07-15T10:00:00",
+            dateAndTime: "2025-07-15T10:00:00",
         },
     ];
 
 
     function ActivitiesSection() {
+
+        const now = new Date();
+        const futureActivities = activities.filter((activity) => activity.dateAndTime && new Date(activity.dateAndTime) > now);
+
         return (
             <Box sx={{ py: 8, px: { xs: 2, md: 4 }, backgroundColor: "#f9f9f9" }}>
                 <Typography variant="h4" gutterBottom textAlign="center">
@@ -96,7 +101,7 @@ function App() {
                 </Typography>
 
                 <Grid container spacing={4} justifyContent="center">
-                    {activities.map((activity, index) => (
+                    {futureActivities.map((activity, index) => (
                         <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
                             <Card>
                                 <CardMedia
@@ -110,13 +115,10 @@ function App() {
                                         {activity.title}
                                     </Typography>
                                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                        {activity.dateAndTime ? new Date(activity.dateAndTime).toLocaleString() : t("home.noDateYet")}
+                                        {t("home.date")}{new Date(activity.dateAndTime).toLocaleString()}
                                     </Typography>
                                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                                         {(activity.participants?.length ?? 0)} / {activity.maxParticipants} {t("home.activityParticipants")}
-                                    </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                        {activity.description}
                                     </Typography>
 
                                 </CardContent>

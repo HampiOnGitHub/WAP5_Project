@@ -10,6 +10,11 @@ import MainLayout from "./layouts/MainLayout";
 import App from "./App.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import EventDetails from "./pages/EventDetails.jsx";
+import ProtectedRoute from "./routes/ProtectedRoute.jsx";
+import OrganizerRoute from "./routes/OrganizerRoute.jsx";
+import EventEdit from "./pages/EventEdit.jsx";
+import EventCreate from "./pages/EventCreate.jsx";
 import { AuthProvider } from "./context/AuthContext";
 
 i18n.use(initReactI18next).init({
@@ -29,6 +34,19 @@ const router = createBrowserRouter([
             { path: "/", element: <App /> },
             { path: "login", element: <Login /> },
             { path: "register", element: <Register /> },
+            {
+                element: <ProtectedRoute />,
+                children: [
+                    { path: "event/eventCreate", element: <EventCreate /> },
+                    { path: "event/:activityId", element: <EventDetails /> },
+                    {
+                        element: <OrganizerRoute />,
+                        children: [
+                            { path: "event/:activityId/edit", element: <EventEdit /> },
+                        ],
+                    },
+                ],
+            },
         ],
     },
 ]);
