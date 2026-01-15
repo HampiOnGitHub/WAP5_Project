@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { useAuth } from "./context/AuthContext";
 import { Link } from "react-router-dom";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 
 
@@ -20,70 +21,26 @@ function App() {
     const { user } = useAuth();
 
 
-    const images = ["/images/tennis.jpg", "/images/volleyball.jpg", "/images/basketball.jpg"];
+    const carouselImages = ["/images/tennis.jpg", "/images/volleyball.jpg", "/images/basketball.jpg"];
 
-    const activities = [
-        {
-            activityId: 1,
-            title: "Tennis",
-            organizer: "Jonas Schön",
-            description: "Entspanntes Tennisdoppel für alle Levels.",
-            img: "/images/tennis.jpg",
-            participants: ["Anna M.", "Lukas F.", "Sophie K."],
-            maxParticipants: 4,
-            dateAndTime: "2026-07-15T10:00:00",
-        },
-        {
-            activityId: 2,
-            title: "Basketball",
-            organizer: "Jonas Swag",
-            description: "Entspanntes Basketballspiel für alle Levels.",
-            img: "/images/basketball.jpg",
-            participants: ["Anna M.", "Lukas F.", "Sophie K.", "Max T."],
-            maxParticipants: 10,
-            dateAndTime: "2026-07-29T10:00:00",
-        },
-        {
-            activityId: 3,
-            title: "Tennis",
-            organizer: "Jonas Schön",
-            description: "Entspanntes Tennisdoppel für alle Levels.",
-            img: "/images/tennis.jpg",
-            participants: ["Anna M.", "Lukas F.", "Sophie K."],
-            maxParticipants: 4,
-            dateAndTime: null,
-        },
-        {
-            activityId: 4,
-            title: "Tennis",
-            organizer: "Jonas Schön",
-            description: "Entspanntes Tennisdoppel für alle Levels.",
-            img: "/images/tennis.jpg",
-            participants: ["Anna M.", "Lukas F.", "Sophie K."],
-            maxParticipants: 4,
-            dateAndTime: "2026-07-15T10:00:00",
-        },
-        {
-            activityId: 5,
-            title: "Tennis",
-            organizer: "Jonas Schön",
-            description: "Entspanntes Tennisdoppel für alle Levels.",
-            img: "/images/tennis.jpg",
-            participants: ["Anna M.", "Lukas F.", "Sophie K."],
-            maxParticipants: 4,
-            dateAndTime: "2026-07-15T10:00:00",
-        },
-        {
-            activityId: 6,
-            title: "Tennisinvergangenheit",
-            organizer: "Jonas Schön",
-            description: "Entspanntes Tennisdoppel für alle Levels.",
-            img: "/images/tennis.jpg",
-            participants: ["Anna M.", "Lukas F.", "Sophie K."],
-            maxParticipants: 4,
-            dateAndTime: "2025-07-15T10:00:00",
-        },
-    ];
+    const cardImages = {
+        football: "/images/football.jpg",
+        tennis: "/images/tennisCard.jpg",
+        volleyball: "/images/volleyballCard.jpg",
+        basketball: "/images/basketballCard.jpg",
+        running: "/images/running.jpg",
+        fitness: "/images/fitness.jpg",
+        swimming: "/images/swimming.jpg",
+        skiing: "/images/skiing.jpg",
+        golf: "/images/golf.jpg",
+        gymnastics: "/images/gymnastics.jpg",
+        bouldering: "/images/bouldering.jpg",
+        other: "/images/other.jpg",
+    };
+
+
+    const activities = JSON.parse(localStorage.getItem("events")) || [];
+    console.log(activities)
 
 
     function ActivitiesSection() {
@@ -96,9 +53,26 @@ function App() {
                 <Typography variant="h4" gutterBottom textAlign="center">
                     {t("home.exploreActivities")}
                 </Typography>
-                <Typography variant="subtitle1" gutterBottom textAlign="center" sx={{ mb: 4, color: "text.secondary" }}>
-                    {t("home.exploreActivitiesDesc")}
-                </Typography>
+                {futureActivities.length === 0 ? (
+                    <>
+                        <Typography variant="subtitle1" gutterBottom textAlign="center" sx={{ mb: 2, color: "text.secondary" }}>
+                            {t("home.noActivities")}
+                        </Typography>
+                    </>
+                ): (
+                    <Typography variant="subtitle1" gutterBottom textAlign="center" sx={{ mb: 2, color: "text.secondary" }}>
+                        {t("home.exploreActivitiesDesc")}
+                    </Typography>
+                )}
+                <Box textAlign="center" gutterBottom sx={{ mb: 4 }}>
+                    {user ? (
+                        <Button variant="contained" size="large" component={Link} to="/event/eventCreate">{t("home.createEvent")}</Button>
+                    ) : (
+                        <Typography variant="subtitle1" gutterBottom textAlign="center" sx={{ mb: 4, color: "text.secondary" }}>
+                            {t("home.loginToCreate")}
+                        </Typography>
+                    )}
+                </Box>
 
                 <Grid container spacing={4} justifyContent="center">
                     {futureActivities.map((activity, index) => (
@@ -106,13 +80,13 @@ function App() {
                             <Card>
                                 <CardMedia
                                     component="img"
-                                    alt={activity.title}
+                                    alt={activity.sport}
                                     height="140"
-                                    image={activity.img}
+                                    image={cardImages[activity.sport] || "/images/other.jpg"}
                                 />
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div">
-                                        {activity.title}
+                                        {t("sports." + activity.sport)}
                                     </Typography>
                                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                                         {t("home.date")}{new Date(activity.dateAndTime).toLocaleString()}
@@ -124,7 +98,20 @@ function App() {
                                 </CardContent>
                                 <CardActions>
                                     {user ? (
-                                        <Button size="small" component={Link} to={`/event/${activity.activityId}`}>{t("home.seeMore")}</Button>
+                                        <>
+                                            {activity.participants.some(p => p.userId === user.id) ? (
+                                                <>
+                                                    <CheckCircleIcon color="success"/>&nbsp;
+                                                    <Typography variant="body2" sx={{ color: 'green' , display: 'inline-block' }}>
+                                                        {t("home.signedUpAlready")}
+                                                    </Typography>
+                                                    &nbsp;
+                                                    <Button size="small" component={Link} to={`/event/${activity.localId}`}>{t("home.seeMore")}</Button>
+                                                </>
+                                            ): (
+                                                <Button size="small" component={Link} to={`/event/${activity.localId}`}>{t("home.seeMoreAndSignUp")}</Button>
+                                            )}
+                                        </>
                                     ) : (
                                         <Button size="small" disabled>{t("home.seeNoMore")}</Button>
                                     )}                                    
@@ -192,7 +179,7 @@ function App() {
                     pagination={{ clickable: true }}
                     loop
                 >
-                    {images.map((slide, index) => (
+                    {carouselImages.map((slide, index) => (
                         <SwiperSlide key={index}>
                             <Box
                                 sx={{

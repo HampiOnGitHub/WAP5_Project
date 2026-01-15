@@ -13,14 +13,15 @@ function OrganizerRoute() {
             return;
         }
 
-        const mockActivities = [
-            { activityId: "1", organizerid: 1 },
-            { activityId: "2", organizerid: 2 },
-        ];
+        const activities = JSON.parse(localStorage.getItem("events")) || [];
+        const activity = activities.find(a => a.localId.toString() === activityId);
 
-        const activity = mockActivities.find(a => a.activityId === activityId);
+        if (!activity) {
+            setAllowed(false);
+            return;
+        }
 
-        setAllowed(activity && user.id === activity.organizerid);
+        setAllowed(user.id === activity.creatorId);
     }, [user, activityId]);
 
     if (allowed === null) return null;

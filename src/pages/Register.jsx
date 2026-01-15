@@ -99,6 +99,7 @@ function Register() {
 
         } catch (err) {
             setServerError(t("errors.serverNotReachable"));
+            console.error("Registration error:", err);
         } finally {
             setLoading(false);
         }

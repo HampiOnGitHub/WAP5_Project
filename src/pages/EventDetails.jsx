@@ -3,84 +3,39 @@ import { useEffect, useState } from "react";
 import { Box, Typography, CardMedia, CardContent, Button } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
+
 
 function EventDetails() {
     const { activityId } = useParams();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const currentLanguage = i18n.language;
     const { user } = useAuth();
 
     const [activity, setActivity] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
-    const activities = [
-        {
-            activityId: 1,
-            title: "Tennis",
-            organizerid: 1,
-            organizer: "Jonas Schön",
-            description: "Entspanntes Tennisdoppel für alle Levels.",
-            img: "/images/tennis.jpg",
-            participants: ["Anna M.", "Lukas F.", "Sophie K."],
-            maxParticipants: 4,
-            dateAndTime: "2026-07-15T10:00:00",
-        },
-        {
-            activityId: 2,
-            title: "Basketball",
-            organizerid: 2,
-            organizer: "Jonas Swag",
-            description: "Entspanntes Basketballspiel für alle Levels.",
-            img: "/images/basketball.jpg",
-            participants: ["Anna M.", "Lukas F.", "Sophie K.", "Max T.", "John D.", "1", "2", "3", "10", "11"],
-            maxParticipants: 10,
-            dateAndTime: "2026-07-29T10:00:00",
-        },
-        {
-            activityId: 3,
-            title: "Tennis",
-            organizer: "Jonas Schön",
-            description: "Entspanntes Tennisdoppel für alle Levels.",
-            img: "/images/tennis.jpg",
-            participants: ["Anna M.", "Lukas F.", "Sophie K."],
-            maxParticipants: 4,
-            dateAndTime: null,
-        },
-        {
-            activityId: 4,
-            title: "Tennis",
-            organizer: "Jonas Schön",
-            description: "Entspanntes Tennisdoppel für alle Levels.",
-            img: "/images/tennis.jpg",
-            participants: ["Anna M.", "Lukas F.", "Sophie K."],
-            maxParticipants: 4,
-            dateAndTime: "2026-07-15T10:00:00",
-        },
-        {
-            activityId: 5,
-            title: "Tennis",
-            organizer: "Jonas Schön",
-            description: "Entspanntes Tennisdoppel für alle Levels.",
-            img: "/images/tennis.jpg",
-            participants: ["Anna M.", "Lukas F.", "Sophie K."],
-            maxParticipants: 4,
-            dateAndTime: "2026-07-15T10:00:00",
-        },
-        {
-            activityId: 6,
-            title: "Tennis",
-            organizer: "Jonas Schön",
-            description: "Entspanntes Tennisdoppel für alle Levels.",
-            img: "/images/tennis.jpg",
-            participants: ["Anna M.", "Lukas F.", "Sophie K."],
-            maxParticipants: 4,
-            dateAndTime: "2026-07-15T10:00:00",
-        },
-    ];
+    const isOrganizer = user && activity?.creatorId && user.id === activity.creatorId;
+    const isParticipant = user && activity?.participants?.some((p) => p.userId === user.id);
 
-    const isOrganizer = user && activity?.organizerid && user.id === activity.organizerid;
     const isFull = (activity?.participants?.length ?? 0) >= activity?.maxParticipants;
-    const canSignUp = user && !isOrganizer && !isFull;
+    const canSignUp = user && !isOrganizer && !isFull && !isParticipant;
+
+    const cardImages = {
+        football: "/images/football.jpg",
+        tennis: "/images/tennisCard.jpg",
+        volleyball: "/images/volleyballCard.jpg",
+        basketball: "/images/basketballCard.jpg",
+        running: "/images/running.jpg",
+        fitness: "/images/fitness.jpg",
+        swimming: "/images/swimming.jpg",
+        skiing: "/images/skiing.jpg",
+        golf: "/images/golf.jpg",
+        gymnastics: "/images/gymnastics.jpg",
+        bouldering: "/images/bouldering.jpg",
+        other: "/images/other.jpg",
+    };
 
     useEffect(() => {
         /* const loadActivity = async () => {
@@ -105,8 +60,10 @@ function EventDetails() {
 
             await new Promise((res) => setTimeout(res, 1000)); // mock delay
 
+            const activities = JSON.parse(localStorage.getItem("events")) || [];
+
             const foundActivity = activities.find(
-                (activity) => activity.activityId.toString() === activityId
+                (activity) => activity.localId.toString() === activityId
             );
 
             if (foundActivity) {
@@ -123,6 +80,68 @@ function EventDetails() {
         loadActivity();
     }, [activityId]);
 
+    const handleSignUp = () => {
+        if (!user || !activity) return;
+        if (
+            activity.participants.some((p) => p.userId === user.id)
+        ) {
+            return;
+        }
+
+        const updatedActivity = {
+            ...activity,
+            participants: [
+                ...activity.participants,
+                {
+                    userId: user.id,
+                    username: user.username,
+                },
+            ],
+        };
+
+        const activities = JSON.parse(localStorage.getItem("events")) || [];
+
+        const updatedActivities = activities.map((a) =>
+            a.localId === activity.localId ? updatedActivity : a
+        );
+
+        localStorage.setItem("events", JSON.stringify(updatedActivities));
+        alert(t("eventDetails.signedUp"));
+        setActivity(updatedActivity);
+    };
+
+    const handleUnsubscribe = () => {
+        if (!user || !activity) return;
+
+        const updatedActivity = {
+            ...activity,
+            participants: activity.participants.filter(
+                (p) => p.userId !== user.id
+            ),
+        };
+
+        const activities = JSON.parse(localStorage.getItem("events")) || [];
+
+        const updatedActivities = activities.map((a) =>
+            a.localId === activity.localId ? updatedActivity : a
+        );
+
+        localStorage.setItem("events", JSON.stringify(updatedActivities));
+        alert(t("eventDetails.unsubscribed"));
+        setActivity(updatedActivity);
+    };
+
+    const handleDelete = () => {
+        if (!user || !activity) return;
+
+        const activities = JSON.parse(localStorage.getItem("events")) || [];
+        const updatedActivities = activities.filter((a) => a.localId !== activity.localId);
+
+        localStorage.setItem("events", JSON.stringify(updatedActivities));
+        alert(t("eventDetails.deletedEvent"));
+        window.history.back();
+    }
+
     if (loading) {
         return <Typography sx={{ p: 4 }}>{t("home.loading")}</Typography>;
     }
@@ -138,11 +157,11 @@ function EventDetails() {
     return (
         <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 800, mx: "auto" }}>
             <Typography variant="h3" gutterBottom>
-                {activity.title}
+                {t("sports." + activity.sport)}
             </Typography>
 
             <Typography variant="subtitle1" sx={{ mt: 2 }}>
-                {t("home.organizer")}: {activity.organizer}
+                {t("home.organizer")}: {activity?.participants[0]?.username}
             </Typography>
 
             <Typography variant="subtitle1" gutterBottom>
@@ -159,7 +178,7 @@ function EventDetails() {
 
             <CardMedia
                 component="img"
-                image={activity.img}
+                image={cardImages[activity.sport] || "/images/other.jpg"}
                 alt={activity.title}
                 sx={{ borderRadius: 2, my: 2 }}
                 height="350"
@@ -167,7 +186,7 @@ function EventDetails() {
 
             <CardContent>
                 <Typography variant="body1">
-                    {activity.description}
+                    {currentLanguage === "en" ? activity.descriptionEn : activity.descriptionGer}
                 </Typography>
             </CardContent>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 3 }}>
@@ -181,12 +200,14 @@ function EventDetails() {
                 {canSignUp && (
                     <Button
                         variant="contained"
+                        onClick={handleSignUp}
                         sx={{
                             backgroundColor: "success.main",
                             "&:hover": { backgroundColor: "success.dark" },
                         }}
                     >
                         {t("eventDetails.signUp")}
+        
                     </Button>
                 )}
 
@@ -201,12 +222,32 @@ function EventDetails() {
                 )}
 
                 {isOrganizer && (
+                    <>
+                        <Button
+                            variant="outlined"
+                            color="warning"
+                            component={Link} to={`/event/${activity.localId}/edit`}
+                        >
+                            {t("eventDetails.editEvent")}
+                        </Button>
+
+                        <Button 
+                            variant="contained"
+                            color="warning"
+                            onClick={handleDelete}
+                            >
+                            {t("eventDetails.deleteEvent")}
+                        </Button>
+                    </>
+                )}
+
+                {isParticipant && !isOrganizer && (
                     <Button
                         variant="outlined"
-                        color="warning"
-                        onClick={() => console.log("Edit event")}
+                        color="error"
+                        onClick={handleUnsubscribe}
                     >
-                        {t("eventDetails.editEvent")}
+                        {t("eventDetails.unsubscribe")}
                     </Button>
                 )}
             </Box>

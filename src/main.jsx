@@ -38,13 +38,14 @@ const router = createBrowserRouter([
                 element: <ProtectedRoute />,
                 children: [
                     { path: "event/eventCreate", element: <EventCreate /> },
-                    { path: "event/:activityId", element: <EventDetails /> },
                     {
                         element: <OrganizerRoute />,
                         children: [
                             { path: "event/:activityId/edit", element: <EventEdit /> },
                         ],
                     },
+                    { path: "event/:activityId", element: <EventDetails /> },
+                    
                 ],
             },
         ],
