@@ -26,6 +26,13 @@ function Login() {
         return Object.keys(newErrors).length === 0;
     };
 
+    const mockUserId = () => {
+        const currentId = Number(localStorage.getItem("userIdMock")) || 0;
+        const nextId = currentId + 1;
+        localStorage.setItem("userIdMock", nextId.toString());
+        return nextId;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setServerError("");
@@ -40,7 +47,7 @@ function Login() {
             // mock
             if (!import.meta.env.VITE_API_URL) {
                 await new Promise((res) => setTimeout(res, 1000));
-                userData = { id: 1, username: identifier, email: "mock@email.com", token: "mock-token" };
+                userData = { id: mockUserId(), username: identifier, email: "mock@email.com", token: "mock-token" };
             } else {
                 const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
                     method: "POST",

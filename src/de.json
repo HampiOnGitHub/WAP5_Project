@@ -1,7 +1,61 @@
 {
     "home": {
-        "title": "Startseite",
-        "welcomeMessage": "Willkommen auf der Startseite des Hagenberg Athletics Clubs."
+        "title": "Hagenberg Athletics Club",
+        "welcomeMessage": "Willkommen beim Hagenberg Athletics Club - vernetze dich mit Sportlerinnen und Sportlern aus der Region.",
+        "activityParticipants": "Teilnehmer",
+        "date": "Datum & Uhrzeit: ",
+        "noDateYet": "Termin nach Absprache",
+        "seeMore": "Details",
+        "seeMoreAndSignUp": "Anmelden & Details",
+        "seeNoMore": "Einloggen für Details",
+        "exploreActivities": "Aktivitäten erkunden",
+        "exploreActivitiesDesc": "Erkunde verschiedene Sportveranstaltungen, die von Sportlerinnen und Sportlern in deiner Region organisiert wurden.",
+        "organizer": "Organizer",
+        "loading": "Inhalte werden geladen...",
+        "goBack": "Zurück",
+        "noActivities": "Leider gibt es aktuell keine verfügbaren Aktivitäten.",
+        "loginToCreate": "Logge dich ein um selbst eine Aktivität zu erstellen!",
+        "createEvent": "Aktivität erstellen",
+        "activityNotFound": "Aktivität nicht gefunden",
+        "signedUpAlready": "Angemeldet"
+    },
+    "eventDetails": {
+        "full": "Aktivität ist voll",
+        "signUp": "Anmelden",
+        "editEvent": "Aktivität bearbeiten",
+        "unsubscribe": "Abmelden",
+        "signedUp": "Du wurdest erfolgreich für die Aktivität angemeldet!",
+        "unsubscribed": "Du wurdest erfolgreich von der Aktivität abgemeldet!", 
+        "deleteEvent": "Aktivität löschen",
+        "deletedEvent": "Die Aktivität wurde erfolgreich gelöscht!"
+    },
+    "eventCreate": {
+        "title": "Aktivität erstellen",
+        "sport": "Sportart",
+        "dateTime": "Datum & Uhrzeit",
+        "maxParticipants": "Maximale Teilnehmerzahl",
+        "descriptionGER": "Deutsche Beschreibung",
+        "descriptionEN": "Englische Beschreibung",
+        "submit": "Aktivität erstellen"
+    },
+    "eventEdit": {
+        "title": "Event bearbeiten",
+        "submit": "Speichern",
+        "notAuthorized": "Du bist nicht berechtigt, dieses Event zu bearbeiten."
+    },
+    "sports": {
+        "football": "Fußball",
+        "tennis": "Tennis",
+        "volleyball": "Volleyball",
+        "basketball": "Basketball",
+        "running": "Laufen",
+        "fitness": "Fitness",
+        "swimming": "Schwimmen",
+        "skiing": "Skifahren",
+        "golf": "Golf",
+        "gymnastics": "Turnen",
+        "bouldering": "Bouldern",
+        "other": "Sonstige"
     },
     "register": {
         "title": "Registrieren",
@@ -28,8 +82,7 @@
     },
     "header": {
         "logout": "Ausloggen",
-        "profile": "Profil",
-        "title": "Hagenberg Athletics Club"
+        "profile": "Profil"
     },
     "errors": {
         "usernameRequired": "Benutzername ist erforderlich",
@@ -43,7 +96,12 @@
         "serverNotReachable": "Server nicht erreichbar",
         "invalidVerificationCode": "Ungültiger Verifizierungscode",
         "identifierRequired": "E-Mail oder Benutzername ist erforderlich",
-        "loginFailed": "Login fehlgeschlagen"
+        "loginFailed": "Login fehlgeschlagen",
+        "sportRequired": "Bitte eine Sportart auswählen",
+        "dateTimeRequired": "Datum und Uhrzeit sind erforderlich",
+        "maxParticipantsInvalid": "Ungültige Teilnehmerzahl",
+        "descriptionRequired": "Beschreibung darf nicht leer sein",
+        "dateTimeInPast": "Datum und Uhrzeit müssen in der Zukunft liegen"
     },
     "messages": {
         "registrationCompleted": "Registrierung erfolgreich abgeschlossen!"
