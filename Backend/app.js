@@ -1,17 +1,18 @@
 import express from "express";
-import userRouter from "./routes/user.js";
+import authRoutes from "./routes/auth.routes.js";
+import eventRoutes from "./routes/event.routes.js";
+import logger from "./middleware/logger.js";
 
 const app = express();
-const port = 3000;
 
 app.use(express.json());
+app.use(logger);
 
-app.get("/", (req, res) => {
-    res.send("Hello from Express Backend");
+app.get("/health", (req, res) => {
+    res.json({ status: "ok" });
 });
 
-app.use("/user", userRouter);
+app.use("/auth", authRoutes);
+app.use("/events", eventRoutes);
 
-app.listen(port, () => {
-    console.log(`Server läuft auf http://localhost:${port}`);
-});
+export default app;
