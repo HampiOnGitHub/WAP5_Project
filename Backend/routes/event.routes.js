@@ -1,6 +1,5 @@
 import express from "express";
 import { ObjectId } from "mongodb";
-import mockAuth from "../middleware/mockAuth.js";
 
 const router = express.Router();
 
@@ -28,8 +27,10 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.post("/", mockAuth, async (req, res) => {
+router.post("/", async (req, res) => {
     const db = req.app.get("db");
+    const authUser = res.locals.oauth.token.user;
+
     const {
         sport,
         descriptionGer,
@@ -38,7 +39,13 @@ router.post("/", mockAuth, async (req, res) => {
         dateAndTime,
     } = req.body;
 
-    if (!sport || !descriptionGer || !descriptionEn || !maxParticipants || !dateAndTime) {
+    if (
+        !sport ||
+        !descriptionGer ||
+        !descriptionEn ||
+        !maxParticipants ||
+        !dateAndTime
+    ) {
         return res.status(400).json({ message: "Missing fields" });
     }
 
@@ -48,11 +55,11 @@ router.post("/", mockAuth, async (req, res) => {
         descriptionEn,
         maxParticipants,
         dateAndTime,
-        creatorId: req.user.id,
+        creatorId: authUser._id,
         participants: [
             {
-                userId: req.user.id,
-                username: req.user.username,
+                userId: authUser._id,
+                username: authUser.username,
             },
         ],
         createdAt: new Date(),
@@ -62,8 +69,9 @@ router.post("/", mockAuth, async (req, res) => {
     res.status(201).json({ ...newEvent, _id: result.insertedId });
 });
 
-router.put("/:id", mockAuth, async (req, res) => {
+router.put("/:id", async (req, res) => {
     const db = req.app.get("db");
+    const authUser = res.locals.oauth.token.user;
 
     const event = await db.collection("events").findOne({
         _id: new ObjectId(req.params.id),
@@ -73,7 +81,7 @@ router.put("/:id", mockAuth, async (req, res) => {
         return res.status(404).json({ message: "Event not found" });
     }
 
-    if (event.creatorId !== req.user.id) {
+    if (!event.creatorId.equals(authUser._id)) {
         return res.status(403).json({ message: "Not authorized" });
     }
 
@@ -82,12 +90,16 @@ router.put("/:id", mockAuth, async (req, res) => {
         { $set: req.body }
     );
 
-    const updated = await db.collection("events").findOne({ _id: event._id });
+    const updated = await db.collection("events").findOne({
+        _id: event._id,
+    });
+
     res.json(updated);
 });
 
-router.delete("/:id", mockAuth, async (req, res) => {
+router.delete("/:id", async (req, res) => {
     const db = req.app.get("db");
+    const authUser = res.locals.oauth.token.user;
 
     const event = await db.collection("events").findOne({
         _id: new ObjectId(req.params.id),
@@ -97,7 +109,7 @@ router.delete("/:id", mockAuth, async (req, res) => {
         return res.status(404).json({ message: "Event not found" });
     }
 
-    if (event.creatorId !== req.user.id) {
+    if (!event.creatorId.equals(authUser._id)) {
         return res.status(403).json({ message: "Not authorized" });
     }
 
@@ -105,8 +117,9 @@ router.delete("/:id", mockAuth, async (req, res) => {
     res.json({ message: "Event deleted" });
 });
 
-router.post("/:id/join", mockAuth, async (req, res) => {
+router.post("/:id/join", async (req, res) => {
     const db = req.app.get("db");
+    const authUser = res.locals.oauth.token.user;
 
     const event = await db.collection("events").findOne({
         _id: new ObjectId(req.params.id),
@@ -117,7 +130,7 @@ router.post("/:id/join", mockAuth, async (req, res) => {
     }
 
     const alreadyJoined = event.participants.some(
-        (p) => p.userId === req.user.id
+        (p) => p.userId.equals(authUser._id)
     );
 
     if (alreadyJoined) {
@@ -133,25 +146,29 @@ router.post("/:id/join", mockAuth, async (req, res) => {
         {
             $push: {
                 participants: {
-                    userId: req.user.id,
-                    username: req.user.username,
+                    userId: authUser._id,
+                    username: authUser.username,
                 },
             },
         }
     );
 
-    const updated = await db.collection("events").findOne({ _id: event._id });
+    const updated = await db.collection("events").findOne({
+        _id: event._id,
+    });
+
     res.json(updated);
 });
 
-router.post("/:id/leave", mockAuth, async (req, res) => {
+router.post("/:id/leave", async (req, res) => {
     const db = req.app.get("db");
+    const authUser = res.locals.oauth.token.user;
 
     await db.collection("events").updateOne(
         { _id: new ObjectId(req.params.id) },
         {
             $pull: {
-                participants: { userId: req.user.id },
+                participants: { userId: authUser._id },
             },
         }
     );
