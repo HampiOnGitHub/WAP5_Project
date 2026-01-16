@@ -1,61 +1,68 @@
 import express from "express";
-import { users } from "../data/users.mock.js";
-import generateId from "../utils/generateId.js";
+import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
     const { identifier, password } = req.body;
+    const db = req.app.get("db");
 
-    const user = users.find(
-        (u) =>
-            (u.email === identifier || u.username === identifier) &&
-            u.password === password
-    );
-
-    if (!user) {
-        return res.status(401).json({ message: "Invalid credentials" });
+    if (!identifier || !password) {
+        return res.status(400).json({ message: "Missing credentials" });
     }
 
-    res.json({
-        user: {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            token: "mock-token",
-        },
-    });
+    try {
+        const user = await db.collection("users").findOne({
+            $or: [{ email: identifier }, { username: identifier }],
+        });
+
+        if (!user || user.password !== password) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+
+        res.json({
+            user: {
+                id: user._id.toString(),
+                username: user.username,
+                email: user.email,
+                token: "mock-token",
+            },
+        });
+    } catch (err) {
+        res.status(500).json({ message: "Login failed" });
+    }
 });
 
-router.post("/register", (req, res) => {
+router.post("/register", async (req, res) => {
     const { username, email, password, firstName, lastName } = req.body;
+    const db = req.app.get("db");
 
     if (!username || !email || !password) {
         return res.status(400).json({ message: "Missing fields" });
     }
 
-    const exists = users.find(
-        (u) => u.email === email || u.username === username
-    );
+    try {
+        const exists = await db.collection("users").findOne({
+            $or: [{ email }, { username }],
+        });
 
-    if (exists) {
-        return res.status(400).json({ message: "User already exists" });
+        if (exists) {
+            return res.status(400).json({ message: "User already exists" });
+        }
+
+        await db.collection("users").insertOne({
+            username,
+            email,
+            password,
+            firstName,
+            lastName,
+            createdAt: new Date(),
+        });
+
+        res.status(201).json({ message: "Registered successfully" });
+    } catch (err) {
+        res.status(500).json({ message: "Registration failed" });
     }
-
-    const newUser = {
-        id: generateId(),
-        username,
-        email,
-        password,
-        firstName,
-        lastName,
-    };
-
-    users.push(newUser);
-
-    res.status(201).json({
-        message: "Registered successfully",
-    });
 });
 
 export default router;
