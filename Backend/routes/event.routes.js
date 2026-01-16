@@ -1,23 +1,35 @@
 import express from "express";
-import { events } from "../data/events.mock.js";
-import generateId from "../utils/generateId.js";
+import { ObjectId } from "mongodb";
 import mockAuth from "../middleware/mockAuth.js";
 
 const router = express.Router();
 
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
+    const db = req.app.get("db");
+    const events = await db.collection("events").find().toArray();
     res.json(events);
 });
 
-router.get("/:id", (req, res) => {
-    const event = events.find(e => e.id === Number(req.params.id));
-    if (!event) {
-        return res.status(404).json({ message: "Event not found" });
+router.get("/:id", async (req, res) => {
+    const db = req.app.get("db");
+
+    try {
+        const event = await db.collection("events").findOne({
+            _id: new ObjectId(req.params.id),
+        });
+
+        if (!event) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+
+        res.json(event);
+    } catch {
+        res.status(400).json({ message: "Invalid event id" });
     }
-    res.json(event);
 });
 
-router.post("/", mockAuth, (req, res) => {
+router.post("/", mockAuth, async (req, res) => {
+    const db = req.app.get("db");
     const {
         sport,
         descriptionGer,
@@ -31,7 +43,6 @@ router.post("/", mockAuth, (req, res) => {
     }
 
     const newEvent = {
-        id: generateId(),
         sport,
         descriptionGer,
         descriptionEn,
@@ -44,16 +55,20 @@ router.post("/", mockAuth, (req, res) => {
                 username: req.user.username,
             },
         ],
-        createdAt: new Date().toISOString(),
+        createdAt: new Date(),
     };
 
-    events.push(newEvent);
-
-    res.status(201).json(newEvent);
+    const result = await db.collection("events").insertOne(newEvent);
+    res.status(201).json({ ...newEvent, _id: result.insertedId });
 });
 
-router.put("/:id", mockAuth, (req, res) => {
-    const event = events.find(e => e.id === Number(req.params.id));
+router.put("/:id", mockAuth, async (req, res) => {
+    const db = req.app.get("db");
+
+    const event = await db.collection("events").findOne({
+        _id: new ObjectId(req.params.id),
+    });
+
     if (!event) {
         return res.status(404).json({ message: "Event not found" });
     }
@@ -62,32 +77,47 @@ router.put("/:id", mockAuth, (req, res) => {
         return res.status(403).json({ message: "Not authorized" });
     }
 
-    Object.assign(event, req.body);
-    res.json(event);
+    await db.collection("events").updateOne(
+        { _id: event._id },
+        { $set: req.body }
+    );
+
+    const updated = await db.collection("events").findOne({ _id: event._id });
+    res.json(updated);
 });
 
-router.delete("/:id", mockAuth, (req, res) => {
-    const index = events.findIndex(e => e.id === Number(req.params.id));
-    if (index === -1) {
+router.delete("/:id", mockAuth, async (req, res) => {
+    const db = req.app.get("db");
+
+    const event = await db.collection("events").findOne({
+        _id: new ObjectId(req.params.id),
+    });
+
+    if (!event) {
         return res.status(404).json({ message: "Event not found" });
     }
 
-    if (events[index].creatorId !== req.user.id) {
+    if (event.creatorId !== req.user.id) {
         return res.status(403).json({ message: "Not authorized" });
     }
 
-    events.splice(index, 1);
+    await db.collection("events").deleteOne({ _id: event._id });
     res.json({ message: "Event deleted" });
 });
 
-router.post("/:id/join", mockAuth, (req, res) => {
-    const event = events.find(e => e.id === Number(req.params.id));
+router.post("/:id/join", mockAuth, async (req, res) => {
+    const db = req.app.get("db");
+
+    const event = await db.collection("events").findOne({
+        _id: new ObjectId(req.params.id),
+    });
+
     if (!event) {
         return res.status(404).json({ message: "Event not found" });
     }
 
     const alreadyJoined = event.participants.some(
-        p => p.userId === req.user.id
+        (p) => p.userId === req.user.id
     );
 
     if (alreadyJoined) {
@@ -98,25 +128,39 @@ router.post("/:id/join", mockAuth, (req, res) => {
         return res.status(400).json({ message: "Event full" });
     }
 
-    event.participants.push({
-        userId: req.user.id,
-        username: req.user.username,
-    });
-
-    res.json(event);
-});
-
-router.post("/:id/leave", mockAuth, (req, res) => {
-    const event = events.find(e => e.id === Number(req.params.id));
-    if (!event) {
-        return res.status(404).json({ message: "Event not found" });
-    }
-
-    event.participants = event.participants.filter(
-        p => p.userId !== req.user.id
+    await db.collection("events").updateOne(
+        { _id: event._id },
+        {
+            $push: {
+                participants: {
+                    userId: req.user.id,
+                    username: req.user.username,
+                },
+            },
+        }
     );
 
-    res.json(event);
+    const updated = await db.collection("events").findOne({ _id: event._id });
+    res.json(updated);
+});
+
+router.post("/:id/leave", mockAuth, async (req, res) => {
+    const db = req.app.get("db");
+
+    await db.collection("events").updateOne(
+        { _id: new ObjectId(req.params.id) },
+        {
+            $pull: {
+                participants: { userId: req.user.id },
+            },
+        }
+    );
+
+    const updated = await db.collection("events").findOne({
+        _id: new ObjectId(req.params.id),
+    });
+
+    res.json(updated);
 });
 
 export default router;
