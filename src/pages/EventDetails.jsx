@@ -171,6 +171,10 @@ function EventDetails() {
                     : t("home.noDateYet")}
             </Typography>
 
+            <Typography variant="subtitle1" gutterBottom>
+                {t("eventCreate.meetingPoint")}: {activity.meetingPoint}
+            </Typography>
+
             <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
                 {(activity.participants?.length ?? 0)} / {activity.maxParticipants}{" "}
                 {t("home.activityParticipants")}
@@ -192,7 +196,7 @@ function EventDetails() {
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 3 }}>
                 <Button
                     variant="contained"
-                    onClick={() => window.history.back()}
+                    component={Link} to="/"
                 >
                     {t("home.goBack")}
                 </Button>

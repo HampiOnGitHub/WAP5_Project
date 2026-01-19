@@ -10,7 +10,7 @@
         "seeNoMore": "Einloggen für Details",
         "exploreActivities": "Aktivitäten erkunden",
         "exploreActivitiesDesc": "Erkunde verschiedene Sportveranstaltungen, die von Sportlerinnen und Sportlern in deiner Region organisiert wurden.",
-        "organizer": "Organizer",
+        "organizer": "Organisator",
         "loading": "Inhalte werden geladen...",
         "goBack": "Zurück",
         "noActivities": "Leider gibt es aktuell keine verfügbaren Aktivitäten.",
@@ -36,12 +36,20 @@
         "maxParticipants": "Maximale Teilnehmerzahl",
         "descriptionGER": "Deutsche Beschreibung",
         "descriptionEN": "Englische Beschreibung",
-        "submit": "Aktivität erstellen"
+        "submit": "Aktivität erstellen",
+        "meetingPoint": "Treffpunkt"
     },
     "eventEdit": {
         "title": "Event bearbeiten",
         "submit": "Speichern",
         "notAuthorized": "Du bist nicht berechtigt, dieses Event zu bearbeiten."
+    },
+    "profile": {
+        "userSince": "Mitglied seit:",
+        "upcomingEvents": "Bevorstehende Aktivitäten",
+        "pastEvents": "Vergangene Aktivitäten",
+        "noUpcomingEvents": "Du hast keine bevorstehenden Aktivitäten.",
+        "noPastEvents": "Du hast keine vergangenen Aktivitäten."
     },
     "sports": {
         "football": "Fußball",
@@ -101,7 +109,8 @@
         "dateTimeRequired": "Datum und Uhrzeit sind erforderlich",
         "maxParticipantsInvalid": "Ungültige Teilnehmerzahl",
         "descriptionRequired": "Beschreibung darf nicht leer sein",
-        "dateTimeInPast": "Datum und Uhrzeit müssen in der Zukunft liegen"
+        "dateTimeInPast": "Datum und Uhrzeit müssen in der Zukunft liegen",
+        "meetingPointRequired": "Treffpunkt ist erforderlich"
     },
     "messages": {
         "registrationCompleted": "Registrierung erfolgreich abgeschlossen!"

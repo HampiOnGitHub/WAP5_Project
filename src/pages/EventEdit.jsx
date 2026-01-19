@@ -17,8 +17,10 @@ function EventEdit() {
     const [sport, setSport] = useState("");
     const [dateTime, setDateTime] = useState(null);
     const [maxParticipants, setMaxParticipants] = useState("");
+    const [meetingPoint, setMeetingPoint] = useState("");
     const [descriptionGer, setDescriptionGer] = useState("");
     const [descriptionEn, setDescriptionEn] = useState("");
+    const [currentParticipants, setCurrentParticipants] = useState(0);
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(true);
 
@@ -56,8 +58,10 @@ function EventEdit() {
         setSport(activity.sport);
         setDateTime(dayjs(activity.dateAndTime));
         setMaxParticipants(activity.maxParticipants);
+        setMeetingPoint(activity.meetingPoint || "");
         setDescriptionGer(activity.descriptionGer);
         setDescriptionEn(activity.descriptionEn);
+        setCurrentParticipants(activity.participants?.length || 0);
         setLoading(false);
     }, [activityId, navigate, t, user.id]);
 
@@ -69,8 +73,11 @@ function EventEdit() {
         if (dateTime && new Date(dateTime) <= new Date()) {
             newErrors.dateTime = t("errors.dateTimeInPast");
         }
-        if (!maxParticipants || maxParticipants <= 1) {
+        if (!maxParticipants || maxParticipants < currentParticipants || maxParticipants <= 1) {
             newErrors.maxParticipants = t("errors.maxParticipantsInvalid");
+        }
+        if (!meetingPoint.trim()) {
+            newErrors.meetingPoint = t("errors.meetingPointRequired");
         }
         if (!descriptionGer.trim()) newErrors.descriptionGer = t("errors.descriptionRequired");
         if (!descriptionEn.trim()) newErrors.descriptionEn = t("errors.descriptionRequired");
@@ -90,6 +97,7 @@ function EventEdit() {
                 return {
                     ...a,
                     sport,
+                    meetingPoint,
                     descriptionGer,
                     descriptionEn,
                     maxParticipants: Number(maxParticipants),
@@ -156,6 +164,15 @@ function EventEdit() {
                             helperText: errors.dateTime,
                         },
                     }}
+                />
+
+                <TextField
+                    label={t("eventCreate.meetingPoint")}
+                    value={meetingPoint}
+                    onChange={(e) => setMeetingPoint(e.target.value)}
+                    error={!!errors.meetingPoint}
+                    helperText={errors.meetingPoint}
+                    required
                 />
 
                 <TextField

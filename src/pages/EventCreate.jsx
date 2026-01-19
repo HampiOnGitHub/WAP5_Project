@@ -17,6 +17,7 @@ function EventCreate() {
     const [maxParticipants, setMaxParticipants] = useState("");
     const [descriptionGer, setDescriptionGer] = useState("");
     const [descriptionEn, setDescriptionEn] = useState("");
+    const [meetingPoint, setMeetingPoint] = useState("");
     const [errors, setErrors] = useState({});
 
     const sportOptions = [
@@ -53,6 +54,9 @@ function EventCreate() {
         if (!maxParticipants || maxParticipants <= 1) {
             newErrors.maxParticipants = t("errors.maxParticipantsInvalid");
         }
+        if (!meetingPoint.trim()) {
+            newErrors.meetingPoint = t("errors.meetingPointRequired");
+        }
         if (!descriptionGer.trim()) {
             newErrors.descriptionGer = t("errors.descriptionRequired");
         }
@@ -72,6 +76,7 @@ function EventCreate() {
             localId: getNextEventId(),
             mongoId: null,
             sport,
+            meetingPoint,
             descriptionGer,
             descriptionEn,
             maxParticipants: Number(maxParticipants),
@@ -150,7 +155,14 @@ function EventCreate() {
                         },
                     }}
                 />
-
+                <TextField
+                    label={t("eventCreate.meetingPoint")}
+                    value={meetingPoint}
+                    onChange={(e) => setMeetingPoint(e.target.value)}
+                    error={!!errors.meetingPoint}
+                    helperText={errors.meetingPoint}
+                    required
+                />
                 <TextField
                     label={t("eventCreate.maxParticipants")}
                     type="number"
