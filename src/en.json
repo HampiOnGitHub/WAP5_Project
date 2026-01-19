@@ -36,12 +36,20 @@
         "maxParticipants": "Maximum participants",
         "descriptionGER": "German Description",
         "descriptionEN": "English Description",
-        "submit": "Create activity"
+        "submit": "Create activity",
+        "meetingPoint": "Meeting Point"
     },
     "eventEdit": {
         "title": "Edit event",
         "submit": "Save",
         "notAuthorized": "You are not authorized to edit this event."
+    },
+    "profile": {
+        "userSince": "User since:",
+        "upcomingEvents": "Upcoming Activities",
+        "pastEvents": "Past Activities",
+        "noUpcomingEvents": "You have no upcoming activities.",
+        "noPastEvents": "You have not participated in any past activities."
     },
     "sports": {
         "football": "Football",
@@ -101,7 +109,9 @@
         "dateTimeRequired": "Date and time are required",
         "maxParticipantsInvalid": "Invalid number of participants",
         "descriptionRequired": "Description is required",
-        "dateTimeInPast": "Date and time must be in the future"
+        "dateTimeInPast": "Date and time must be in the future",
+        "meetingPointRequired": "Meeting point is required"
+
     },
     "messages": {
         "registrationCompleted": "Registration completed successfully!"

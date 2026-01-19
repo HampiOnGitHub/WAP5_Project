@@ -49,7 +49,7 @@ function Header() {
                         </>
                     ) : (
                         <>
-                            <Button color="inherit" component={Link} to="/">
+                            <Button color="inherit" component={Link} to="/profile">
                                 {t("header.profile")}
                             </Button>
                             <Button color="inherit" onClick={logout}>

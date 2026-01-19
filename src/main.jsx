@@ -15,6 +15,7 @@ import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 import OrganizerRoute from "./routes/OrganizerRoute.jsx";
 import EventEdit from "./pages/EventEdit.jsx";
 import EventCreate from "./pages/EventCreate.jsx";
+import Profile from "./pages/Profile.jsx";
 import { AuthProvider } from "./context/AuthContext";
 
 i18n.use(initReactI18next).init({
@@ -45,6 +46,7 @@ const router = createBrowserRouter([
                         ],
                     },
                     { path: "event/:activityId", element: <EventDetails /> },
+                    { path: "profile", element: <Profile /> },
                     
                 ],
             },

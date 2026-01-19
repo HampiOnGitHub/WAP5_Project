@@ -108,8 +108,12 @@ function App() {
                                                     &nbsp;
                                                     <Button size="small" component={Link} to={`/event/${activity.localId}`}>{t("home.seeMore")}</Button>
                                                 </>
-                                            ): (
-                                                <Button size="small" component={Link} to={`/event/${activity.localId}`}>{t("home.seeMoreAndSignUp")}</Button>
+                                            ) : (
+                                                activity.participants.length < activity.maxParticipants ? (
+                                                    <Button size="small" component={Link} to={`/event/${activity.localId}`}>{t("home.seeMoreAndSignUp")}</Button>
+                                                ) : (
+                                                    <Button size="small" component={Link} to={`/event/${activity.localId}`}>{t("home.seeMore")}</Button>
+                                                )
                                             )}
                                         </>
                                     ) : (
