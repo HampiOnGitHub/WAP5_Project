@@ -16,7 +16,7 @@ function OrganizerRoute() {
 
             try {
                 const res = await fetch(
-                    `${import.meta.env.VITE_API_URL}/events/${activityId}`,
+                    `api/events/${activityId}`,
                     {
                         headers: {
                             Authorization: `Bearer ${accessToken}`,

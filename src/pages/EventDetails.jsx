@@ -55,7 +55,7 @@ function EventDetails() {
         const loadActivity = async () => {
             try {
                 const res = await fetch(
-                    `${import.meta.env.VITE_API_URL}/events/${activityId}`,
+                    `api/events/${activityId}`,
                     {
                         headers: {
                             Authorization: `Bearer ${accessToken}`,
@@ -86,7 +86,7 @@ function EventDetails() {
     const handleSignUp = async () => {
         try {
             const res = await fetch(
-                `${import.meta.env.VITE_API_URL}/events/${activityId}/join`,
+                `api/events/${activityId}/join`,
                 {
                     method: "POST",
                     headers: {
@@ -108,7 +108,7 @@ function EventDetails() {
     const handleUnsubscribe = async () => {
         try {
             const res = await fetch(
-                `${import.meta.env.VITE_API_URL}/events/${activityId}/leave`,
+                `api/events/${activityId}/leave`,
                 {
                     method: "POST",
                     headers: {
@@ -130,7 +130,7 @@ function EventDetails() {
     const handleDelete = async () => {
         try {
             const res = await fetch(
-                `${import.meta.env.VITE_API_URL}/events/${activityId}`,
+                `/api/events/${activityId}`,
                 {
                     method: "DELETE",
                     headers: {
