@@ -1,14 +1,27 @@
-import { Box, Typography, Grid, Card, CardContent, CardMedia, CardActions, Button, Divider } from "@mui/material";
+import {
+    Box,
+    Typography,
+    Grid,
+    Card,
+    CardContent,
+    CardMedia,
+    CardActions,
+    Button,
+    Divider,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { useEffect, useState } from "react";
 
 function Profile() {
     const { t } = useTranslation();
-    const { user } = useAuth();
+    const { user, accessToken } = useAuth();
 
-    const activities = JSON.parse(localStorage.getItem("events")) || [];
+    const [activities, setActivities] = useState([]);
+    const [loading, setLoading] = useState(true);
+
     const now = new Date();
 
     const cardImages = {
@@ -26,6 +39,35 @@ function Profile() {
         other: "/images/other.jpg",
     };
 
+    // 🔌 EVENTS LADEN
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const res = await fetch(
+                    `${import.meta.env.VITE_API_URL}/events`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    }
+                );
+
+                if (!res.ok) throw new Error();
+
+                const data = await res.json();
+                setActivities(data);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (accessToken) {
+            fetchEvents();
+        }
+    }, [accessToken]);
+
     if (!user) {
         return (
             <Box sx={{ p: 4 }}>
@@ -34,9 +76,13 @@ function Profile() {
         );
     }
 
-    const isParticipant = (activity) => activity.participants?.some((p) => p.userId === user.id);
+    const isParticipant = (activity) =>
+        activity.participants?.some(
+            (p) => p.username === user.username
+        );
 
-    const isOrganizer = (activity) => activity.creatorId === user.id;
+    const isOrganizer = (activity) =>
+        activity.participants?.[0]?.username === user.username;
 
     const upcomingEvents = activities.filter((activity) => {
         if (!activity.dateAndTime) return false;
@@ -58,24 +104,42 @@ function Profile() {
     const renderEventCards = (events) => (
         <Grid container spacing={4}>
             {events.map((activity) => (
-                <Grid size={{ xs: 12, sm: 6, md: 3 }} key={activity.localId}>
+                <Grid
+                    item
+                    xs={12}
+                    sm={6}
+                    md={3}
+                    key={activity._id}
+                >
                     <Card>
                         <CardMedia
                             component="img"
                             height="140"
-                            image={cardImages[activity.sport] || "/images/other.jpg"}
+                            image={
+                                cardImages[activity.sport] ||
+                                "/images/other.jpg"
+                            }
                             alt={activity.sport}
                         />
                         <CardContent>
                             <Typography variant="h5">
                                 {t("sports." + activity.sport)}
                             </Typography>
-                            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "text.secondary" }}
+                            >
                                 {t("home.date")}
-                                {new Date(activity.dateAndTime).toLocaleString()}
+                                {new Date(
+                                    activity.dateAndTime
+                                ).toLocaleString()}
                             </Typography>
-                            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                                {(activity.participants?.length ?? 0)} / {activity.maxParticipants}{" "}
+                            <Typography
+                                variant="body2"
+                                sx={{ color: "text.secondary" }}
+                            >
+                                {activity.participants?.length ?? 0} /{" "}
+                                {activity.maxParticipants}{" "}
                                 {t("home.activityParticipants")}
                             </Typography>
                         </CardContent>
@@ -83,7 +147,14 @@ function Profile() {
                             {isParticipant(activity) && (
                                 <>
                                     <CheckCircleIcon color="success" />
-                                    <Typography variant="body2" sx={{ color: 'green' , display: 'inline-block' }}>
+                                    &nbsp;
+                                    <Typography
+                                        variant="body2"
+                                        sx={{
+                                            color: "green",
+                                            display: "inline-block",
+                                        }}
+                                    >
                                         {t("home.signedUpAlready")}
                                     </Typography>
                                     &nbsp;
@@ -92,7 +163,7 @@ function Profile() {
                             <Button
                                 size="small"
                                 component={Link}
-                                to={`/event/${activity.localId}`}
+                                to={`/event/${activity._id}`}
                             >
                                 {t("home.seeMore")}
                             </Button>
@@ -103,14 +174,20 @@ function Profile() {
         </Grid>
     );
 
+    if (loading) {
+        return <Typography sx={{ p: 4 }}>{t("home.loading")}</Typography>;
+    }
+
     return (
         <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1200, mx: "auto" }}>
-            {/* Profile Header */}
             <Box sx={{ mb: 4 }}>
                 <Typography variant="h3">
                     {user.username}
                 </Typography>
-                <Typography variant="subtitle1" sx={{ color: "text.secondary" }}>
+                <Typography
+                    variant="subtitle1"
+                    sx={{ color: "text.secondary" }}
+                >
                     {t("profile.userSince")}{" "}
                     {new Date().toLocaleDateString()}
                 </Typography>
@@ -133,7 +210,6 @@ function Profile() {
                 </Box>
             )}
 
-            {/* Past Events */}
             <Typography variant="h4" gutterBottom>
                 {t("profile.pastEvents")}
             </Typography>

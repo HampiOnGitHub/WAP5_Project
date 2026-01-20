@@ -51,7 +51,6 @@ function EventDetails() {
         other: "/images/other.jpg",
     };
 
-    // 🔌 EVENT LADEN
     useEffect(() => {
         const loadActivity = async () => {
             try {
@@ -84,7 +83,6 @@ function EventDetails() {
         }
     }, [activityId, accessToken]);
 
-    // ➕ JOIN
     const handleSignUp = async () => {
         try {
             const res = await fetch(
@@ -107,7 +105,6 @@ function EventDetails() {
         }
     };
 
-    // ➖ LEAVE
     const handleUnsubscribe = async () => {
         try {
             const res = await fetch(
@@ -130,7 +127,6 @@ function EventDetails() {
         }
     };
 
-    // 🗑️ DELETE
     const handleDelete = async () => {
         try {
             const res = await fetch(

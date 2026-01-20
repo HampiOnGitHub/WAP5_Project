@@ -39,7 +39,6 @@ function EventEdit() {
         { value: "other", labelKey: "sports.other" },
     ];
 
-    // 🔌 EVENT LADEN
     useEffect(() => {
         const loadEvent = async () => {
             try {
@@ -116,7 +115,6 @@ function EventEdit() {
         return Object.keys(newErrors).length === 0;
     };
 
-    // 💾 UPDATE EVENT
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validate()) return;

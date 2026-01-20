@@ -10,7 +10,7 @@ import { useAuth } from "../context/AuthContext";
 function EventCreate() {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { user, accessToken } = useAuth();
+    const { accessToken } = useAuth();
 
     const [sport, setSport] = useState("");
     const [dateTime, setDateTime] = useState(null);
