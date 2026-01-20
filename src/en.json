@@ -81,7 +81,7 @@
     },
     "login": {
         "title": "Login",
-        "identifier": "Email or Username",
+        "identifier": "Email",
         "password": "Password",
         "loginButton": "Login",
         "processing": "Processing...",
@@ -103,7 +103,7 @@
         "registrationFailed": "Registration failed",
         "serverNotReachable": "Server not reachable",
         "invalidVerificationCode": "Invalid verification code",
-        "identifierRequired": "Email or Username is required",
+        "identifierRequired": "Email is required",
         "loginFailed": "Login failed",
         "sportRequired": "Please select a sport",
         "dateTimeRequired": "Date and time are required",
