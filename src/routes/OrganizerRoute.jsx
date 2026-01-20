@@ -3,26 +3,43 @@ import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 
 function OrganizerRoute() {
-    const { user } = useAuth();
+    const { user, accessToken } = useAuth();
     const { activityId } = useParams();
     const [allowed, setAllowed] = useState(null);
 
     useEffect(() => {
-        if (!user) {
-            setAllowed(false);
-            return;
-        }
+        const checkOrganizer = async () => {
+            if (!user || !accessToken) {
+                setAllowed(false);
+                return;
+            }
 
-        const activities = JSON.parse(localStorage.getItem("events")) || [];
-        const activity = activities.find(a => a.localId.toString() === activityId);
+            try {
+                const res = await fetch(
+                    `${import.meta.env.VITE_API_URL}/events/${activityId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    }
+                );
 
-        if (!activity) {
-            setAllowed(false);
-            return;
-        }
+                if (!res.ok) throw new Error();
 
-        setAllowed(user.id === activity.creatorId);
-    }, [user, activityId]);
+                const activity = await res.json();
+
+                const isOrganizer =
+                    activity.participants?.[0]?.username === user.username;
+
+                setAllowed(isOrganizer);
+            } catch (err) {
+                console.error(err);
+                setAllowed(false);
+            }
+        };
+
+        checkOrganizer();
+    }, [user, accessToken, activityId]);
 
     if (allowed === null) return null;
 

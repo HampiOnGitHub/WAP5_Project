@@ -33,6 +33,7 @@ router.post("/", async (req, res) => {
 
     const {
         sport,
+        meetingPoint,
         descriptionGer,
         descriptionEn,
         maxParticipants,
@@ -41,6 +42,7 @@ router.post("/", async (req, res) => {
 
     if (
         !sport ||
+        !meetingPoint ||
         !descriptionGer ||
         !descriptionEn ||
         !maxParticipants ||
@@ -51,6 +53,7 @@ router.post("/", async (req, res) => {
 
     const newEvent = {
         sport,
+        meetingPoint,
         descriptionGer,
         descriptionEn,
         maxParticipants,

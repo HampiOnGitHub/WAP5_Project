@@ -10,7 +10,7 @@ import { useAuth } from "../context/AuthContext";
 function EventCreate() {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { accessToken } = useAuth();
 
     const [sport, setSport] = useState("");
     const [dateTime, setDateTime] = useState(null);
@@ -19,6 +19,7 @@ function EventCreate() {
     const [descriptionEn, setDescriptionEn] = useState("");
     const [meetingPoint, setMeetingPoint] = useState("");
     const [errors, setErrors] = useState({});
+    const [submitting, setSubmitting] = useState(false);
 
     const sportOptions = [
         { value: "football", labelKey: "sports.football" },
@@ -34,14 +35,6 @@ function EventCreate() {
         { value: "bouldering", labelKey: "sports.bouldering" },
         { value: "other", labelKey: "sports.other" },
     ];
-
-
-    const getNextEventId = () => {
-        const currentId = Number(localStorage.getItem("eventIdCounter")) || 0;
-        const nextId = currentId + 1;
-        localStorage.setItem("eventIdCounter", nextId.toString());
-        return nextId;
-    };
 
     const validate = () => {
         const newErrors = {};
@@ -68,42 +61,43 @@ function EventCreate() {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validate()) return;
 
+        setSubmitting(true);
+
         const newEvent = {
-            localId: getNextEventId(),
-            mongoId: null,
             sport,
             meetingPoint,
             descriptionGer,
             descriptionEn,
             maxParticipants: Number(maxParticipants),
-            participants: [
-                {
-                    userId: user.id,
-                    username: user.username,
-                },
-            ],
-            creatorId: user.id,
             dateAndTime: dateTime.toISOString(),
-            createdAt: new Date().toISOString(),
         };
 
-        const storedEvents =
-            JSON.parse(localStorage.getItem("events")) || [];
+        try {
+            const response = await fetch("http://localhost:3000/api/events", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify(newEvent),
+            });
 
-        localStorage.setItem(
-            "events",
-            JSON.stringify([...storedEvents, newEvent])
-        );
-        console.log("Event created:", newEvent);
+            if (!response.ok) {
+                throw new Error("Event creation failed");
+            }
 
-        navigate("/");
+            navigate("/");
+        } catch (err) {
+            console.error(err);
+            alert(t("errors.generic"));
+        } finally {
+            setSubmitting(false);
+        }
     };
-
-
 
     return (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -155,6 +149,7 @@ function EventCreate() {
                         },
                     }}
                 />
+
                 <TextField
                     label={t("eventCreate.meetingPoint")}
                     value={meetingPoint}
@@ -163,6 +158,7 @@ function EventCreate() {
                     helperText={errors.meetingPoint}
                     required
                 />
+
                 <TextField
                     label={t("eventCreate.maxParticipants")}
                     type="number"
@@ -195,7 +191,12 @@ function EventCreate() {
                     required
                 />
 
-                <Button type="submit" variant="contained" size="large">
+                <Button
+                    type="submit"
+                    variant="contained"
+                    size="large"
+                    disabled={submitting}
+                >
                     {t("eventCreate.submit")}
                 </Button>
             </Box>

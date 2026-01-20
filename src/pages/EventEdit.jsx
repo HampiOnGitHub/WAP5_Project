@@ -11,8 +11,8 @@ import dayjs from "dayjs";
 function EventEdit() {
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const { user } = useAuth();
     const { activityId } = useParams();
+    const { user, accessToken } = useAuth();
 
     const [sport, setSport] = useState("");
     const [dateTime, setDateTime] = useState(null);
@@ -40,30 +40,50 @@ function EventEdit() {
     ];
 
     useEffect(() => {
-        const activities = JSON.parse(localStorage.getItem("events")) || [];
-        const activity = activities.find(a => a.localId.toString() === activityId);
+        const loadEvent = async () => {
+            try {
+                const res = await fetch(
+                    `${import.meta.env.VITE_API_URL}/events/${activityId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    }
+                );
 
-        if (!activity) {
-            alert(t("home.activityNotFound"));
-            navigate("/");
-            return;
+                if (!res.ok) throw new Error();
+
+                const activity = await res.json();
+
+                const isOrganizer =
+                    activity.participants?.[0]?.username === user.username;
+
+                if (!isOrganizer) {
+                    alert(t("eventEdit.notAuthorized"));
+                    navigate("/");
+                    return;
+                }
+
+                setSport(activity.sport);
+                setDateTime(dayjs(activity.dateAndTime));
+                setMaxParticipants(activity.maxParticipants);
+                setMeetingPoint(activity.meetingPoint || "");
+                setDescriptionGer(activity.descriptionGer);
+                setDescriptionEn(activity.descriptionEn);
+                setCurrentParticipants(activity.participants?.length || 0);
+            } catch (err) {
+                console.error(err);
+                alert(t("home.activityNotFound"));
+                navigate("/");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (accessToken && user) {
+            loadEvent();
         }
-
-        if (user.id !== activity.creatorId) {
-            alert(t("eventEdit.notAuthorized"));
-            navigate("/");
-            return;
-        }
-
-        setSport(activity.sport);
-        setDateTime(dayjs(activity.dateAndTime));
-        setMaxParticipants(activity.maxParticipants);
-        setMeetingPoint(activity.meetingPoint || "");
-        setDescriptionGer(activity.descriptionGer);
-        setDescriptionEn(activity.descriptionEn);
-        setCurrentParticipants(activity.participants?.length || 0);
-        setLoading(false);
-    }, [activityId, navigate, t, user.id]);
+    }, [activityId, accessToken, user, navigate, t]);
 
     const validate = () => {
         const newErrors = {};
@@ -73,42 +93,60 @@ function EventEdit() {
         if (dateTime && new Date(dateTime) <= new Date()) {
             newErrors.dateTime = t("errors.dateTimeInPast");
         }
-        if (!maxParticipants || maxParticipants < currentParticipants || maxParticipants <= 1) {
+        if (
+            !maxParticipants ||
+            maxParticipants < currentParticipants ||
+            maxParticipants <= 1
+        ) {
             newErrors.maxParticipants = t("errors.maxParticipantsInvalid");
         }
         if (!meetingPoint.trim()) {
             newErrors.meetingPoint = t("errors.meetingPointRequired");
         }
-        if (!descriptionGer.trim()) newErrors.descriptionGer = t("errors.descriptionRequired");
-        if (!descriptionEn.trim()) newErrors.descriptionEn = t("errors.descriptionRequired");
+        if (!descriptionGer.trim()) {
+            newErrors.descriptionGer = t("errors.descriptionRequired");
+        }
+        if (!descriptionEn.trim()) {
+            newErrors.descriptionEn = t("errors.descriptionRequired");
+        }
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validate()) return;
 
-        const activities = JSON.parse(localStorage.getItem("events")) || [];
+        const updatedEvent = {
+            sport,
+            meetingPoint,
+            descriptionGer,
+            descriptionEn,
+            maxParticipants: Number(maxParticipants),
+            dateAndTime: dateTime.toISOString(),
+        };
 
-        const updatedActivities = activities.map(a => {
-            if (a.localId.toString() === activityId) {
-                return {
-                    ...a,
-                    sport,
-                    meetingPoint,
-                    descriptionGer,
-                    descriptionEn,
-                    maxParticipants: Number(maxParticipants),
-                    dateAndTime: dateTime.toISOString(),
-                };
-            }
-            return a;
-        });
+        try {
+            const res = await fetch(
+                `${import.meta.env.VITE_API_URL}/events/${activityId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify(updatedEvent),
+                }
+            );
 
-        localStorage.setItem("events", JSON.stringify(updatedActivities));
-        navigate(`/event/${activityId}`);
+            if (!res.ok) throw new Error();
+
+            navigate(`/event/${activityId}`);
+        } catch (err) {
+            console.error(err);
+            alert(t("errors.generic"));
+        }
     };
 
     if (loading) {

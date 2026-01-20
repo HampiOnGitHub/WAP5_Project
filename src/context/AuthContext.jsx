@@ -4,11 +4,16 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
+    const [accessToken, setAccessToken] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const stored = localStorage.getItem("authUser");
-        if (stored) setUser(JSON.parse(stored));
+        const storedUser = localStorage.getItem("authUser");
+        const storedToken = localStorage.getItem("accessToken");
+
+        if (storedUser) setUser(JSON.parse(storedUser));
+        if (storedToken) setAccessToken(storedToken);
+
         setLoading(false);
     }, []);
 
@@ -20,22 +25,21 @@ export function AuthProvider({ children }) {
             password,
         });
 
-        const res = await fetch(
-            `${import.meta.env.VITE_API_URL}/token`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-                body,
-            }
-        );
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/token`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body,
+        });
 
         const data = await res.json();
         if (!res.ok) throw data;
 
         localStorage.setItem("accessToken", data.access_token);
         localStorage.setItem("refreshToken", data.refresh_token);
+
+        setAccessToken(data.access_token);
 
         const userObj = { username };
         localStorage.setItem("authUser", JSON.stringify(userObj));
@@ -46,11 +50,21 @@ export function AuthProvider({ children }) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("authUser");
+
         setUser(null);
+        setAccessToken(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, loading }}>
+        <AuthContext.Provider
+            value={{
+                user,
+                accessToken,
+                login,
+                logout,
+                loading,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );
