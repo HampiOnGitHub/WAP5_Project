@@ -39,7 +39,6 @@ function Profile() {
         other: "/images/other.jpg",
     };
 
-    // 🔌 EVENTS LADEN
     useEffect(() => {
         const fetchEvents = async () => {
             try {
