@@ -1,39 +1,52 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
-const SESSION_DURATION = 2 * 60 * 60 * 1000;
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("authUser");
-        const loginTime = localStorage.getItem("authUserTime");
-
-        if (storedUser && loginTime) {
-            const elapsed = Date.now() - parseInt(loginTime, 10);
-            if (elapsed < SESSION_DURATION) {
-                setUser(JSON.parse(storedUser));
-            } else {
-                localStorage.removeItem("authUser");
-                localStorage.removeItem("authUserTime");
-            }
-        }
+        const stored = localStorage.getItem("authUser");
+        if (stored) setUser(JSON.parse(stored));
         setLoading(false);
     }, []);
 
-    const login = (userData) => {
-        setUser(userData);
-        console.log(userData);
-        localStorage.setItem("authUser", JSON.stringify(userData));
-        localStorage.setItem("authUserTime", Date.now().toString());
+    const login = async (username, password) => {
+        const body = new URLSearchParams({
+            grant_type: "password",
+            client_id: "client",
+            username,
+            password,
+        });
+
+        const res = await fetch(
+            `${import.meta.env.VITE_API_URL}/token`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body,
+            }
+        );
+
+        const data = await res.json();
+        if (!res.ok) throw data;
+
+        localStorage.setItem("accessToken", data.access_token);
+        localStorage.setItem("refreshToken", data.refresh_token);
+
+        const userObj = { username };
+        localStorage.setItem("authUser", JSON.stringify(userObj));
+        setUser(userObj);
     };
 
     const logout = () => {
-        setUser(null);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
         localStorage.removeItem("authUser");
-        localStorage.removeItem("authUserTime");
+        setUser(null);
     };
 
     return (
@@ -43,7 +56,6 @@ export function AuthProvider({ children }) {
     );
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
     return useContext(AuthContext);
 }

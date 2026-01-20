@@ -81,7 +81,7 @@
     },
     "login": {
         "title": "Login",
-        "identifier": "E-Mail oder Benutzername",
+        "identifier": "E-Mail",
         "password": "Passwort",
         "loginButton": "Anmelden",
         "processing": "Wird verarbeitet...",
@@ -103,7 +103,7 @@
         "registrationFailed": "Registrierung fehlgeschlagen",
         "serverNotReachable": "Server nicht erreichbar",
         "invalidVerificationCode": "Ungültiger Verifizierungscode",
-        "identifierRequired": "E-Mail oder Benutzername ist erforderlich",
+        "identifierRequired": "E-Mail ist erforderlich",
         "loginFailed": "Login fehlgeschlagen",
         "sportRequired": "Bitte eine Sportart auswählen",
         "dateTimeRequired": "Datum und Uhrzeit sind erforderlich",

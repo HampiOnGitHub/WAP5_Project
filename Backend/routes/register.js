@@ -44,9 +44,9 @@ router.post("/", async (req, res) => {
 router.put("/:token", async (req, res) => {
     try {
         const db = req.app.get("db");
-        const { first_name, last_name, password } = req.body;
+        const {user_name, first_name, last_name, password } = req.body;
 
-        if (!first_name || !last_name || !password) {
+        if (!user_name || !first_name || !last_name || !password) {
             return res.status(400).send();
         }
 
@@ -59,6 +59,7 @@ router.put("/:token", async (req, res) => {
         }
 
         const userInsert = await db.collection("user").insertOne({
+            user_name,
             first_name,
             last_name,
             permissions: { write: true },
