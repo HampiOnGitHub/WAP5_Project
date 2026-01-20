@@ -1,27 +1,40 @@
-import { Box, Typography, Grid, Card, CardContent, CardMedia, CardActions, Button } from "@mui/material";
+import { useEffect, useState } from "react";
+import {
+    Box,
+    Typography,
+    Grid,
+    Card,
+    CardContent,
+    CardMedia,
+    CardActions,
+    Button,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useTheme, useMediaQuery } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { useAuth } from "./context/AuthContext";
 import { Link } from "react-router-dom";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-
-
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { Home } from "@mui/icons-material";
 
 function App() {
     const { t } = useTranslation();
     const theme = useTheme();
     const showNavigation = useMediaQuery(theme.breakpoints.up("md"));
-    const { user } = useAuth();
+    const { user, accessToken } = useAuth();
 
+    const [activities, setActivities] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const carouselImages = ["/images/tennis.jpg", "/images/volleyball.jpg", "/images/basketball.jpg"];
+    const carouselImages = [
+        "/images/tennis.jpg",
+        "/images/volleyball.jpg",
+        "/images/basketball.jpg",
+    ];
 
     const cardImages = {
         football: "/images/football.jpg",
@@ -38,87 +51,201 @@ function App() {
         other: "/images/other.jpg",
     };
 
+    // 🔌 EVENTS VOM BACKEND LADEN
+    useEffect(() => {
+        const fetchEvents = async () => {
+            try {
+                const res = await fetch(
+                    `${import.meta.env.VITE_API_URL}/events`,
+                    {
+                        headers: accessToken
+                            ? { Authorization: `Bearer ${accessToken}` }
+                            : {},
+                    }
+                );
 
-    const activities = JSON.parse(localStorage.getItem("events")) || [];
-    console.log(activities)
+                if (!res.ok) {
+                    throw new Error("Failed to load events");
+                }
 
+                const data = await res.json();
+                setActivities(data);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchEvents();
+    }, [accessToken]);
 
     function ActivitiesSection() {
-
         const now = new Date();
-        const futureActivities = activities.filter((activity) => activity.dateAndTime && new Date(activity.dateAndTime) > now);
+        const futureActivities = activities.filter(
+            (activity) =>
+                activity.dateAndTime &&
+                new Date(activity.dateAndTime) > now
+        );
 
         return (
-            <Box sx={{ py: 8, px: { xs: 2, md: 4 }, backgroundColor: "#f9f9f9" }}>
+            <Box
+                sx={{
+                    py: 8,
+                    px: { xs: 2, md: 4 },
+                    backgroundColor: "#f9f9f9",
+                }}
+            >
                 <Typography variant="h4" gutterBottom textAlign="center">
                     {t("home.exploreActivities")}
                 </Typography>
+
                 {futureActivities.length === 0 ? (
-                    <>
-                        <Typography variant="subtitle1" gutterBottom textAlign="center" sx={{ mb: 2, color: "text.secondary" }}>
-                            {t("home.noActivities")}
-                        </Typography>
-                    </>
-                ): (
-                    <Typography variant="subtitle1" gutterBottom textAlign="center" sx={{ mb: 2, color: "text.secondary" }}>
+                    <Typography
+                        variant="subtitle1"
+                        gutterBottom
+                        textAlign="center"
+                        sx={{ mb: 2, color: "text.secondary" }}
+                    >
+                        {t("home.noActivities")}
+                    </Typography>
+                ) : (
+                    <Typography
+                        variant="subtitle1"
+                        gutterBottom
+                        textAlign="center"
+                        sx={{ mb: 2, color: "text.secondary" }}
+                    >
                         {t("home.exploreActivitiesDesc")}
                     </Typography>
                 )}
+
                 <Box textAlign="center" gutterBottom sx={{ mb: 4 }}>
                     {user ? (
-                        <Button variant="contained" size="large" component={Link} to="/event/eventCreate">{t("home.createEvent")}</Button>
+                        <Button
+                            variant="contained"
+                            size="large"
+                            component={Link}
+                            to="/event/eventCreate"
+                        >
+                            {t("home.createEvent")}
+                        </Button>
                     ) : (
-                        <Typography variant="subtitle1" gutterBottom textAlign="center" sx={{ mb: 4, color: "text.secondary" }}>
+                        <Typography
+                            variant="subtitle1"
+                            gutterBottom
+                            textAlign="center"
+                            sx={{ mb: 4, color: "text.secondary" }}
+                        >
                             {t("home.loginToCreate")}
                         </Typography>
                     )}
                 </Box>
 
                 <Grid container spacing={4} justifyContent="center">
-                    {futureActivities.map((activity, index) => (
-                        <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
+                    {futureActivities.map((activity) => (
+                        <Grid
+                            item
+                            xs={12}
+                            sm={6}
+                            md={3}
+                            key={activity._id}
+                        >
                             <Card>
                                 <CardMedia
                                     component="img"
                                     alt={activity.sport}
                                     height="140"
-                                    image={cardImages[activity.sport] || "/images/other.jpg"}
+                                    image={
+                                        cardImages[activity.sport] ||
+                                        "/images/other.jpg"
+                                    }
                                 />
                                 <CardContent>
-                                    <Typography gutterBottom variant="h5" component="div">
+                                    <Typography
+                                        gutterBottom
+                                        variant="h5"
+                                        component="div"
+                                    >
                                         {t("sports." + activity.sport)}
                                     </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                        {t("home.date")}{new Date(activity.dateAndTime).toLocaleString()}
+                                    <Typography
+                                        variant="body2"
+                                        sx={{ color: "text.secondary" }}
+                                    >
+                                        {t("home.date")}
+                                        {new Date(
+                                            activity.dateAndTime
+                                        ).toLocaleString()}
                                     </Typography>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                        {(activity.participants?.length ?? 0)} / {activity.maxParticipants} {t("home.activityParticipants")}
+                                    <Typography
+                                        variant="body2"
+                                        sx={{ color: "text.secondary" }}
+                                    >
+                                        {activity.participants?.length ?? 0} /{" "}
+                                        {activity.maxParticipants}{" "}
+                                        {t("home.activityParticipants")}
                                     </Typography>
-
                                 </CardContent>
+
                                 <CardActions>
                                     {user ? (
                                         <>
-                                            {activity.participants.some(p => p.userId === user.id) ? (
+                                            {activity.participants.some(
+                                                (p) =>
+                                                    p.username ===
+                                                    user.username
+                                            ) ? (
                                                 <>
-                                                    <CheckCircleIcon color="success"/>&nbsp;
-                                                    <Typography variant="body2" sx={{ color: 'green' , display: 'inline-block' }}>
-                                                        {t("home.signedUpAlready")}
+                                                    <CheckCircleIcon color="success" />
+                                                    &nbsp;
+                                                    <Typography
+                                                        variant="body2"
+                                                        sx={{
+                                                            color: "green",
+                                                            display:
+                                                                "inline-block",
+                                                        }}
+                                                    >
+                                                        {t(
+                                                            "home.signedUpAlready"
+                                                        )}
                                                     </Typography>
                                                     &nbsp;
-                                                    <Button size="small" component={Link} to={`/event/${activity.localId}`}>{t("home.seeMore")}</Button>
+                                                    <Button
+                                                        size="small"
+                                                        component={Link}
+                                                        to={`/event/${activity._id}`}
+                                                    >
+                                                        {t("home.seeMore")}
+                                                    </Button>
                                                 </>
+                                            ) : activity.participants.length <
+                                            activity.maxParticipants ? (
+                                                <Button
+                                                    size="small"
+                                                    component={Link}
+                                                    to={`/event/${activity._id}`}
+                                                >
+                                                    {t(
+                                                        "home.seeMoreAndSignUp"
+                                                    )}
+                                                </Button>
                                             ) : (
-                                                activity.participants.length < activity.maxParticipants ? (
-                                                    <Button size="small" component={Link} to={`/event/${activity.localId}`}>{t("home.seeMoreAndSignUp")}</Button>
-                                                ) : (
-                                                    <Button size="small" component={Link} to={`/event/${activity.localId}`}>{t("home.seeMore")}</Button>
-                                                )
+                                                <Button
+                                                    size="small"
+                                                    component={Link}
+                                                    to={`/event/${activity._id}`}
+                                                >
+                                                    {t("home.seeMore")}
+                                                </Button>
                                             )}
                                         </>
                                     ) : (
-                                        <Button size="small" disabled>{t("home.seeNoMore")}</Button>
-                                    )}                                    
+                                        <Button size="small" disabled>
+                                            {t("home.seeNoMore")}
+                                        </Button>
+                                    )}
                                 </CardActions>
                             </Card>
                         </Grid>
@@ -130,7 +257,6 @@ function App() {
 
     return (
         <>
-
             <Box sx={{ position: "relative" }}>
                 <Box
                     sx={{
@@ -191,14 +317,14 @@ function App() {
                                     backgroundImage: `url(${slide})`,
                                     backgroundSize: "cover",
                                     backgroundPosition: "center",
-                                    zIndex: -1,
                                 }}
                             />
                         </SwiperSlide>
                     ))}
                 </Swiper>
             </Box>
-            <ActivitiesSection />
+
+            {!loading && <ActivitiesSection />}
         </>
     );
 }

@@ -1,25 +1,39 @@
-import { useParams } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Box, Typography, CardMedia, CardContent, Button } from "@mui/material";
+import {
+    Box,
+    Typography,
+    CardMedia,
+    CardContent,
+    Button,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
-import { Link } from "react-router-dom";
-
 
 function EventDetails() {
     const { activityId } = useParams();
+    const navigate = useNavigate();
     const { t, i18n } = useTranslation();
     const currentLanguage = i18n.language;
-    const { user } = useAuth();
+    const { user, accessToken } = useAuth();
 
     const [activity, setActivity] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
 
-    const isOrganizer = user && activity?.creatorId && user.id === activity.creatorId;
-    const isParticipant = user && activity?.participants?.some((p) => p.userId === user.id);
+    const isOrganizer =
+        user &&
+        activity?.participants?.[0]?.username === user.username;
 
-    const isFull = (activity?.participants?.length ?? 0) >= activity?.maxParticipants;
+    const isParticipant =
+        user &&
+        activity?.participants?.some(
+            (p) => p.username === user.username
+        );
+
+    const isFull =
+        (activity?.participants?.length ?? 0) >= activity?.maxParticipants;
+
     const canSignUp = user && !isOrganizer && !isFull && !isParticipant;
 
     const cardImages = {
@@ -37,110 +51,106 @@ function EventDetails() {
         other: "/images/other.jpg",
     };
 
+    // 🔌 EVENT LADEN
     useEffect(() => {
-        /* const loadActivity = async () => {
+        const loadActivity = async () => {
             try {
-                const response = await fetch(`/event/eventDetail/${activityId}`);
+                const res = await fetch(
+                    `${import.meta.env.VITE_API_URL}/events/${activityId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    }
+                );
 
-                if (!response.ok) {
+                if (!res.ok) {
                     throw new Error("Failed to load event");
                 }
 
-                const data = await response.json();
+                const data = await res.json();
                 setActivity(data);
+                setError(false);
             } catch (err) {
                 console.error(err);
                 setError(true);
             } finally {
                 setLoading(false);
             }
-        };*/
-        const loadActivity = async () => {
-            setLoading(true);
+        };
 
-            await new Promise((res) => setTimeout(res, 1000)); // mock delay
+        if (accessToken) {
+            loadActivity();
+        }
+    }, [activityId, accessToken]);
 
-            const activities = JSON.parse(localStorage.getItem("events")) || [];
-
-            const foundActivity = activities.find(
-                (activity) => activity.localId.toString() === activityId
+    // ➕ JOIN
+    const handleSignUp = async () => {
+        try {
+            const res = await fetch(
+                `${import.meta.env.VITE_API_URL}/events/${activityId}/join`,
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
             );
 
-            if (foundActivity) {
-                setActivity(foundActivity);
-                setError(false);
-            } else {
-                setActivity(null);
-                setError(true);
-            }
+            if (!res.ok) throw new Error();
 
-            setLoading(false);
-        };
-
-        loadActivity();
-    }, [activityId]);
-
-    const handleSignUp = () => {
-        if (!user || !activity) return;
-        if (
-            activity.participants.some((p) => p.userId === user.id)
-        ) {
-            return;
+            const updated = await res.json();
+            setActivity(updated);
+            alert(t("eventDetails.signedUp"));
+        } catch {
+            alert(t("errors.generic"));
         }
+    };
 
-        const updatedActivity = {
-            ...activity,
-            participants: [
-                ...activity.participants,
+    // ➖ LEAVE
+    const handleUnsubscribe = async () => {
+        try {
+            const res = await fetch(
+                `${import.meta.env.VITE_API_URL}/events/${activityId}/leave`,
                 {
-                    userId: user.id,
-                    username: user.username,
-                },
-            ],
-        };
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
 
-        const activities = JSON.parse(localStorage.getItem("events")) || [];
+            if (!res.ok) throw new Error();
 
-        const updatedActivities = activities.map((a) =>
-            a.localId === activity.localId ? updatedActivity : a
-        );
-
-        localStorage.setItem("events", JSON.stringify(updatedActivities));
-        alert(t("eventDetails.signedUp"));
-        setActivity(updatedActivity);
+            const updated = await res.json();
+            setActivity(updated);
+            alert(t("eventDetails.unsubscribed"));
+        } catch {
+            alert(t("errors.generic"));
+        }
     };
 
-    const handleUnsubscribe = () => {
-        if (!user || !activity) return;
+    // 🗑️ DELETE
+    const handleDelete = async () => {
+        try {
+            const res = await fetch(
+                `${import.meta.env.VITE_API_URL}/events/${activityId}`,
+                {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                }
+            );
 
-        const updatedActivity = {
-            ...activity,
-            participants: activity.participants.filter(
-                (p) => p.userId !== user.id
-            ),
-        };
+            if (!res.ok) throw new Error();
 
-        const activities = JSON.parse(localStorage.getItem("events")) || [];
-
-        const updatedActivities = activities.map((a) =>
-            a.localId === activity.localId ? updatedActivity : a
-        );
-
-        localStorage.setItem("events", JSON.stringify(updatedActivities));
-        alert(t("eventDetails.unsubscribed"));
-        setActivity(updatedActivity);
+            alert(t("eventDetails.deletedEvent"));
+            navigate("/");
+        } catch {
+            alert(t("errors.generic"));
+        }
     };
-
-    const handleDelete = () => {
-        if (!user || !activity) return;
-
-        const activities = JSON.parse(localStorage.getItem("events")) || [];
-        const updatedActivities = activities.filter((a) => a.localId !== activity.localId);
-
-        localStorage.setItem("events", JSON.stringify(updatedActivities));
-        alert(t("eventDetails.deletedEvent"));
-        window.history.back();
-    }
 
     if (loading) {
         return <Typography sx={{ p: 4 }}>{t("home.loading")}</Typography>;
@@ -161,14 +171,13 @@ function EventDetails() {
             </Typography>
 
             <Typography variant="subtitle1" sx={{ mt: 2 }}>
-                {t("home.organizer")}: {activity?.participants[0]?.username}
+                {t("home.organizer")}:{" "}
+                {activity.participants?.[0]?.username}
             </Typography>
 
             <Typography variant="subtitle1" gutterBottom>
                 {t("home.date")}
-                {activity.dateAndTime
-                    ? new Date(activity.dateAndTime).toLocaleString()
-                    : t("home.noDateYet")}
+                {new Date(activity.dateAndTime).toLocaleString()}
             </Typography>
 
             <Typography variant="subtitle1" gutterBottom>
@@ -176,28 +185,28 @@ function EventDetails() {
             </Typography>
 
             <Typography variant="body2" sx={{ color: "text.secondary", mb: 2 }}>
-                {(activity.participants?.length ?? 0)} / {activity.maxParticipants}{" "}
+                {activity.participants.length} / {activity.maxParticipants}{" "}
                 {t("home.activityParticipants")}
             </Typography>
 
             <CardMedia
                 component="img"
                 image={cardImages[activity.sport] || "/images/other.jpg"}
-                alt={activity.title}
+                alt={activity.sport}
                 sx={{ borderRadius: 2, my: 2 }}
                 height="350"
             />
 
             <CardContent>
                 <Typography variant="body1">
-                    {currentLanguage === "en" ? activity.descriptionEn : activity.descriptionGer}
+                    {currentLanguage === "en"
+                        ? activity.descriptionEn
+                        : activity.descriptionGer}
                 </Typography>
             </CardContent>
+
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 3 }}>
-                <Button
-                    variant="contained"
-                    component={Link} to="/"
-                >
+                <Button variant="contained" component={Link} to="/">
                     {t("home.goBack")}
                 </Button>
 
@@ -207,11 +216,12 @@ function EventDetails() {
                         onClick={handleSignUp}
                         sx={{
                             backgroundColor: "success.main",
-                            "&:hover": { backgroundColor: "success.dark" },
+                            "&:hover": {
+                                backgroundColor: "success.dark",
+                            },
                         }}
                     >
                         {t("eventDetails.signUp")}
-        
                     </Button>
                 )}
 
@@ -230,16 +240,17 @@ function EventDetails() {
                         <Button
                             variant="outlined"
                             color="warning"
-                            component={Link} to={`/event/${activity.localId}/edit`}
+                            component={Link}
+                            to={`/event/${activity._id}/edit`}
                         >
                             {t("eventDetails.editEvent")}
                         </Button>
 
-                        <Button 
+                        <Button
                             variant="contained"
                             color="warning"
                             onClick={handleDelete}
-                            >
+                        >
                             {t("eventDetails.deleteEvent")}
                         </Button>
                     </>
@@ -255,7 +266,6 @@ function EventDetails() {
                     </Button>
                 )}
             </Box>
-
         </Box>
     );
 }
