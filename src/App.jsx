@@ -51,7 +51,6 @@ function App() {
         other: "/images/other.jpg",
     };
 
-    // 🔌 EVENTS VOM BACKEND LADEN
     useEffect(() => {
         const fetchEvents = async () => {
             try {

@@ -55,7 +55,6 @@ function EventEdit() {
 
                 const activity = await res.json();
 
-                // 🔐 Organizer-Check
                 const isOrganizer =
                     activity.participants?.[0]?.username === user.username;
 

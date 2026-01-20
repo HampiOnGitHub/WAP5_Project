@@ -36,13 +36,11 @@ export function AuthProvider({ children }) {
         const data = await res.json();
         if (!res.ok) throw data;
 
-        // 🔐 Token speichern
         localStorage.setItem("accessToken", data.access_token);
         localStorage.setItem("refreshToken", data.refresh_token);
 
         setAccessToken(data.access_token);
 
-        // 👤 User speichern (wie bisher)
         const userObj = { username };
         localStorage.setItem("authUser", JSON.stringify(userObj));
         setUser(userObj);
