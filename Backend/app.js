@@ -2,6 +2,7 @@ import express from "express";
 import { MongoClient } from "mongodb";
 import OAuthServer from "express-oauth-server";
 import "dotenv/config";
+import cors from "cors";
 
 import register from "./routes/register.js";
 import eventRoutes from "./routes/event.routes.js";
@@ -11,9 +12,6 @@ import oAuthModel from "./oAuth/oAuthModel.js";
 const app = express();
 
 if (process.env.NODE_ENV !== "test") {
-
-    const cors = require("cors");
-
     app.use(
         cors({
             origin: "http://localhost:5173",
