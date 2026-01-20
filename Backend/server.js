@@ -1,8 +1,31 @@
 import app from "./app.js";
-import 'dotenv/config';
+import { MongoClient } from "mongodb";
+import OAuthServer from "express-oauth-server";
+import register from "./routes/register.js";
+import eventRoutes from "./routes/event.routes.js";
+import oAuthModel from "./oAuth/oAuthModel.js";
+import "dotenv/config";
 
-const PORT = process.env.PORT;
+const client = new MongoClient(process.env.MONGO_URI);
+await client.connect();
+const db = client.db("wap5");
 
-app.listen(PORT, () => {
-    console.log(`🚀 Backend running on http://localhost:${PORT}`);
+app.set("db", db);
+
+const oauth = new OAuthServer({
+    model: oAuthModel(db),
+});
+
+app.use("/api/token", oauth.token({
+    requireClientAuthentication: {
+        password: false,
+        refresh_token: false,
+    },
+}));
+
+app.use("/api/register", register);
+app.use("/api/events", oauth.authenticate(), eventRoutes);
+
+app.listen(3000, () => {
+    console.log("🚀 Server läuft auf Port 3000");
 });
