@@ -55,7 +55,7 @@ function App() {
         const fetchEvents = async () => {
             try {
                 const res = await fetch(
-                    `api/events`,
+                    `/api/events`,
                     {
                         headers: accessToken
                             ? { Authorization: `Bearer ${accessToken}` }

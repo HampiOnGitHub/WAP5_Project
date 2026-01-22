@@ -16,7 +16,7 @@ function OrganizerRoute() {
 
             try {
                 const res = await fetch(
-                    `api/events/${activityId}`,
+                    `/api/events/${activityId}`,
                     {
                         headers: {
                             Authorization: `Bearer ${accessToken}`,

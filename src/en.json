@@ -67,7 +67,7 @@
     },
     "register": {
         "title": "Register",
-        "username": "Username",
+        "userName": "Username",
         "firstName": "First Name",
         "lastName": "Last Name",
         "email": "Email",
@@ -77,7 +77,10 @@
         "verificationSent": "A verification code has been sent! (Check console for mock code)",
         "registerButton": "Register",
         "verifyButton": "Verify Code",
-        "processing": "Processing..."
+        "processing": "Processing...",
+        "completeRegistration": "Complete Registration",
+        "activationToken": "Activation-Token (server console)",
+        "activateButton": "Activate Account"
     },
     "login": {
         "title": "Login",
@@ -100,17 +103,18 @@
         "passwordRequired": "Password is required",
         "confirmPasswordRequired": "Please confirm your password",
         "passwordsDoNotMatch": "Passwords do not match",
-        "registrationFailed": "Registration failed",
+        "registrationFailed": "E-Mail already taken",
         "serverNotReachable": "Server not reachable",
         "invalidVerificationCode": "Invalid verification code",
         "identifierRequired": "Email is required",
-        "loginFailed": "Login failed",
+        "loginFailed": "Invalid password or e-mail",
         "sportRequired": "Please select a sport",
         "dateTimeRequired": "Date and time are required",
         "maxParticipantsInvalid": "Invalid number of participants",
         "descriptionRequired": "Description is required",
         "dateTimeInPast": "Date and time must be in the future",
-        "meetingPointRequired": "Meeting point is required"
+        "meetingPointRequired": "Meeting point is required",
+        "activationFailed": "Activation failed"
 
     },
     "messages": {
