@@ -67,7 +67,7 @@
     },
     "register": {
         "title": "Registrieren",
-        "username": "Benutzername",
+        "userName": "Benutzername",
         "firstName": "Vorname",
         "lastName": "Nachname",
         "email": "E-Mail",
@@ -77,7 +77,10 @@
         "verificationSent": "Ein Verifizierungscode wurde gesendet! (Siehe Konsole für Mock-Code)",
         "registerButton": "Registrieren",
         "verifyButton": "Code überprüfen",
-        "processing": "Verarbeitung..."
+        "processing": "Verarbeitung...",
+        "completeRegistration": "Registrierung abschließen",
+        "activationToken": "Aktivierungs-Token (Server-Konsole)",
+        "activateButton": "Account aktivieren"
     },
     "login": {
         "title": "Login",
@@ -100,17 +103,18 @@
         "passwordRequired": "Passwort ist erforderlich",
         "confirmPasswordRequired": "Bitte bestätigen Sie Ihr Passwort",
         "passwordsDoNotMatch": "Passwörter stimmen nicht überein",
-        "registrationFailed": "Registrierung fehlgeschlagen",
+        "registrationFailed": "(E-Mail bereits vergeben)",
         "serverNotReachable": "Server nicht erreichbar",
         "invalidVerificationCode": "Ungültiger Verifizierungscode",
         "identifierRequired": "E-Mail ist erforderlich",
-        "loginFailed": "Login fehlgeschlagen",
+        "loginFailed": "Invalides Passwort oder E-Mail",
         "sportRequired": "Bitte eine Sportart auswählen",
         "dateTimeRequired": "Datum und Uhrzeit sind erforderlich",
         "maxParticipantsInvalid": "Ungültige Teilnehmerzahl",
         "descriptionRequired": "Beschreibung darf nicht leer sein",
         "dateTimeInPast": "Datum und Uhrzeit müssen in der Zukunft liegen",
-        "meetingPointRequired": "Treffpunkt ist erforderlich"
+        "meetingPointRequired": "Treffpunkt ist erforderlich",
+        "activationFailed": "Aktivierung fehlgeschlagen"
     },
     "messages": {
         "registrationCompleted": "Registrierung erfolgreich abgeschlossen!"

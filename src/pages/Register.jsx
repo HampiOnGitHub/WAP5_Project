@@ -56,7 +56,7 @@ function Register() {
         setLoading(true);
 
         try {
-            const res = await fetch(`${API_URL}/register`, {
+            const res = await fetch(`api/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email }),
@@ -84,7 +84,7 @@ function Register() {
         setLoading(true);
 
         try {
-            const res = await fetch(`${API_URL}/register/${token}`, {
+            const res = await fetch(`api/register/${token}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
