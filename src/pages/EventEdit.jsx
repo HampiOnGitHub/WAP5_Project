@@ -43,7 +43,7 @@ function EventEdit() {
         const loadEvent = async () => {
             try {
                 const res = await fetch(
-                    `api/events/${activityId}`,
+                    `/api/events/${activityId}`,
                     {
                         headers: {
                             Authorization: `Bearer ${accessToken}`,
@@ -129,7 +129,7 @@ function EventEdit() {
 
         try {
             const res = await fetch(
-                `api/events/${activityId}`,
+                `/api/events/${activityId}`,
                 {
                     method: "PUT",
                     headers: {
@@ -142,7 +142,7 @@ function EventEdit() {
 
             if (!res.ok) throw new Error();
 
-            navigate(`api/event/${activityId}`);
+            navigate(`/event/${activityId}`);
         } catch (err) {
             console.error(err);
             alert(t("errors.generic"));
