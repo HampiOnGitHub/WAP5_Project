@@ -1,0 +1,122 @@
+{
+    "home": {
+        "title": "Hagenberg Athletics Club",
+        "welcomeMessage": "Willkommen beim Hagenberg Athletics Club - vernetze dich mit Sportlerinnen und Sportlern aus der Region.",
+        "activityParticipants": "Teilnehmer",
+        "date": "Datum & Uhrzeit: ",
+        "noDateYet": "Termin nach Absprache",
+        "seeMore": "Details",
+        "seeMoreAndSignUp": "Anmelden & Details",
+        "seeNoMore": "Einloggen für Details",
+        "exploreActivities": "Aktivitäten erkunden",
+        "exploreActivitiesDesc": "Erkunde verschiedene Sportveranstaltungen, die von Sportlerinnen und Sportlern in deiner Region organisiert wurden.",
+        "organizer": "Organisator",
+        "loading": "Inhalte werden geladen...",
+        "goBack": "Zurück",
+        "noActivities": "Leider gibt es aktuell keine verfügbaren Aktivitäten.",
+        "loginToCreate": "Logge dich ein um selbst eine Aktivität zu erstellen!",
+        "createEvent": "Aktivität erstellen",
+        "activityNotFound": "Aktivität nicht gefunden",
+        "signedUpAlready": "Angemeldet"
+    },
+    "eventDetails": {
+        "full": "Aktivität ist voll",
+        "signUp": "Anmelden",
+        "editEvent": "Aktivität bearbeiten",
+        "unsubscribe": "Abmelden",
+        "signedUp": "Du wurdest erfolgreich für die Aktivität angemeldet!",
+        "unsubscribed": "Du wurdest erfolgreich von der Aktivität abgemeldet!", 
+        "deleteEvent": "Aktivität löschen",
+        "deletedEvent": "Die Aktivität wurde erfolgreich gelöscht!"
+    },
+    "eventCreate": {
+        "title": "Aktivität erstellen",
+        "sport": "Sportart",
+        "dateTime": "Datum & Uhrzeit",
+        "maxParticipants": "Maximale Teilnehmerzahl",
+        "descriptionGER": "Deutsche Beschreibung",
+        "descriptionEN": "Englische Beschreibung",
+        "submit": "Aktivität erstellen",
+        "meetingPoint": "Treffpunkt"
+    },
+    "eventEdit": {
+        "title": "Event bearbeiten",
+        "submit": "Speichern",
+        "notAuthorized": "Du bist nicht berechtigt, dieses Event zu bearbeiten."
+    },
+    "profile": {
+        "userSince": "Mitglied seit:",
+        "upcomingEvents": "Bevorstehende Aktivitäten",
+        "pastEvents": "Vergangene Aktivitäten",
+        "noUpcomingEvents": "Du hast keine bevorstehenden Aktivitäten.",
+        "noPastEvents": "Du hast keine vergangenen Aktivitäten."
+    },
+    "sports": {
+        "football": "Fußball",
+        "tennis": "Tennis",
+        "volleyball": "Volleyball",
+        "basketball": "Basketball",
+        "running": "Laufen",
+        "fitness": "Fitness",
+        "swimming": "Schwimmen",
+        "skiing": "Skifahren",
+        "golf": "Golf",
+        "gymnastics": "Turnen",
+        "bouldering": "Bouldern",
+        "other": "Sonstige"
+    },
+    "register": {
+        "title": "Registrieren",
+        "userName": "Benutzername",
+        "firstName": "Vorname",
+        "lastName": "Nachname",
+        "email": "E-Mail",
+        "password": "Passwort",
+        "confirmPassword": "Passwort bestätigen",
+        "verificationCode": "Verifizierungscode",
+        "verificationSent": "Ein Verifizierungscode wurde gesendet! (Siehe Konsole für Mock-Code)",
+        "registerButton": "Registrieren",
+        "verifyButton": "Code überprüfen",
+        "processing": "Verarbeitung...",
+        "completeRegistration": "Registrierung abschließen",
+        "activationToken": "Aktivierungs-Token (Server-Konsole)",
+        "activateButton": "Account aktivieren"
+    },
+    "login": {
+        "title": "Login",
+        "identifier": "E-Mail",
+        "password": "Passwort",
+        "loginButton": "Anmelden",
+        "processing": "Wird verarbeitet...",
+        "noAccount": "Noch keinen Account?",
+        "registerLink": "Hier registrieren"
+    },
+    "header": {
+        "logout": "Ausloggen",
+        "profile": "Profil"
+    },
+    "errors": {
+        "usernameRequired": "Benutzername ist erforderlich",
+        "firstNameRequired": "Vorname ist erforderlich",
+        "lastNameRequired": "Nachname ist erforderlich",
+        "emailRequired": "E-Mail ist erforderlich",
+        "passwordRequired": "Passwort ist erforderlich",
+        "confirmPasswordRequired": "Bitte bestätigen Sie Ihr Passwort",
+        "passwordsDoNotMatch": "Passwörter stimmen nicht überein",
+        "registrationFailed": "(E-Mail bereits vergeben)",
+        "serverNotReachable": "Server nicht erreichbar",
+        "invalidVerificationCode": "Ungültiger Verifizierungscode",
+        "identifierRequired": "E-Mail ist erforderlich",
+        "loginFailed": "Invalides Passwort oder E-Mail",
+        "sportRequired": "Bitte eine Sportart auswählen",
+        "dateTimeRequired": "Datum und Uhrzeit sind erforderlich",
+        "maxParticipantsInvalid": "Ungültige Teilnehmerzahl",
+        "descriptionRequired": "Beschreibung darf nicht leer sein",
+        "dateTimeInPast": "Datum und Uhrzeit müssen in der Zukunft liegen",
+        "meetingPointRequired": "Treffpunkt ist erforderlich",
+        "activationFailed": "Aktivierung fehlgeschlagen"
+    },
+    "messages": {
+        "registrationCompleted": "Registrierung erfolgreich abgeschlossen!"
+    }
+}
